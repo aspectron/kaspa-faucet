@@ -7,10 +7,10 @@
 	"main": "kaspa-faucet-website.js",
 	"dependencies": {
 		"@webcomponents/webcomponentsjs": "*",
-		"@aspectron/flow-ux": "../flow-ux",
-		"@aspectron/flow-router": "file:../flow-router",
+		"@aspectron/flow-ux": "aspectron/flow-ux",
+		"@aspectron/flow-router": "aspectron/flow-router",
 		"@aspectron/flow-utils": "*",
-		"@aspectron/flow-fastify-socket-io": "file:../flow-fastify-socket-io",
+		"@aspectron/flow-fastify-socket-io": "aspectron/flow-fastify-socket-io",
 		"lit-element": "*",
 		"colors": "*",
 		"socket.io": "*",
