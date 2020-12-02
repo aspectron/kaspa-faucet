@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Kaspa Faucet</title>
+	<link rel="stylesheet" type="text/css" href="/flow/flow-ux/resources/css/reset.css" />
+	<link rel="stylesheet" type="text/css" href="/flow/flow-ux/flow-ux.css" />
+	<link rel="stylesheet" type="text/css" href="/style/fonts.css" />
+	<link rel="stylesheet" type="text/css" href="/style/main.css" />
+	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript">
+		var flow = {
+			theme:{
+				iconPath:"/fonts/fontawesome/sprites/",
+				iconFile:"light",
+				icons:{
+					//"info-circle": "light:acorn"
+				}
+			}
+		}
+	</script>
+	<script src="/webcomponentsjs/webcomponents-loader.js"></script>
+	<script type="module" src="/app.js"></script>
+	<script type="module" src="/flow/flow-ux/flow-ux.js"></script>
+</head>
+<body class="loading flow-theme-light v-box mini-left-menu">
+	<svg style="display:none">
+		<use href="/fonts/fontawesome/sprites/light.svg#home" />
+	</svg>
+	<kaspa-app class="flex" no-drawer>
+		<img slot="header" src="/images/logo/logo-bright.png" class="logo light" />
+		<img slot="header" src="/images/logo/logo-dark.png" class="logo dark" />
+		<!--flow-app-drawer slot="drawer" class="left-area">
+			<ul class="menu" id="left-menu">
+				<li data-menu="home" class="active" title="Home">
+					<fa-icon icon="fal:home"></fa-icon>
+					<span class="text">Home</span>
+				</li>
+			</ul>
+		</flow-app-drawer-->
+		<div slot="main" class="main-area flex sbar">
+			<div for="home" class="tab-content">
+				<div class="p-30">
+					<h1>Home Page</h1>
+					<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+				</div>
+				<faucet-form></faucet-form>
+			</div>
+		</div>
+	</kaspa-app>
+</body>
+</html>

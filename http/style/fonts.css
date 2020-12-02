@@ -1,0 +1,37 @@
+@font-face {
+	font-family:'Source Code Pro';font-style:normal;
+	src: url("/fonts/SourceCodePro/SourceCodePro-Regular.ttf") format('truetype');
+}
+@font-face {
+	font-family:'Source Code Pro';font-style:normal;font-weight:300;
+	src: url("/fonts/SourceCodePro/SourceCodePro-Light.ttf") format('truetype');
+}
+@font-face {
+	font-family:'Source Code Pro';font-style:normal; font-weight:bold;
+	src: url("/fonts/SourceCodePro/SourceCodePro-Bold.ttf") format('truetype');
+}
+@font-face{
+	font-family: 'Open Sans';
+	src: url("/fonts/Open Sans.ttf") format('truetype');
+}
+@font-face{
+	font-family: 'Consolas';font-style: normal;
+	src: url("/fonts/Consolas.woff") format('woff');
+}
+@font-face {
+	font-family:'Exo 2';font-style:normal;
+	src: url("/fonts/Exo2/Exo2-Regular.ttf") format('truetype');
+}
+@font-face {
+	font-family:'Exo 2';font-style:normal; font-weight:300;
+	src: url("/fonts/Exo2/Exo2-Light.ttf") format('truetype');
+}
+@font-face {
+	font-family:'Exo 2';font-style:normal; font-weight:bold;
+	src: url("/fonts/Exo2/Exo2-Bold.ttf") format('truetype');
+}
+
+@font-face {
+	font-family:'PT Mono';font-style:normal; font-weight:300;
+	src: url("/fonts/PTMono/PTMono-Regular.ttf") format('truetype');
+}

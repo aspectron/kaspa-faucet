@@ -1,0 +1,12 @@
+
+const E = new Emanator(__dirname, {
+	type : 'NODE',
+	banner : 'kaspa faucet',
+	git : 'git@github.com:aspectron/kaspa-faucet',
+	production: true,
+});
+
+const npm = await E.modules.npm();
+
+if(E.flags['update'])
+    await npm.reinstall();

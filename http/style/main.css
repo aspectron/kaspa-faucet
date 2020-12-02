@@ -1,0 +1,57 @@
+.drawer-opened{--flow-app-drawer-width:150px;}
+body.loading:after{
+	content:"";position:fixed;z-index:10000;
+	left:0px;top:0px;right:0px;bottom:0px;
+	background:rgb(255,255,255) no-repeat center;
+	background-image:url("/images/spinner.svg");
+	background-size:100px auto;
+	min-height:100vh;
+}
+#tabs{--flow-tab-font-weight:normal;--flow-tab-font-size:1.2rem;}
+.logo{width:100px;display:inline-block;
+	align-self:flex-start;object-fit: contain;
+    object-position: left center;
+}
+.menu{padding:20px 0px;list-style:none}
+.menu li{padding:8px 15px;font-size:1rem;user-select:none;}
+.menu li:not(.disabled):not(.active):hover{
+	cursor:pointer;background-color:rgba(204,204,204, 0.2);
+	color:var(--flow-primary-color);
+}
+.menu li.active{
+    color:var(--flow-primary-color);
+    background-color:#3c3c3c;position:relative;
+}
+.menu li.active svg{fill:var(--flow-primary-color);}
+.menu li{--fa-icon-color:var(--flow-color);}
+.menu li .text{margin-left:10px;}
+.menu li.sep{padding:0px;margin:2px 0px;border-bottom:1px solid var(--flow-primary-color);}
+.header{min-height:85px;width:100px;display:flex;align-items: center;}
+.left-area .menu li{text-transform:uppercase;display:flex;align-items:center}
+body.flow-user-signedin .left-area .menu li.non-user-menu,
+body:not(.flow-user-signedin) .left-area .menu li.user-menu{
+    display:none;
+}
+body:not(.drawer-opened) flow-app-drawer li .text{display:none}
+body:not(.flow-theme-light){--logo-light-display:none;}
+body:not(.flow-theme-dark){--logo-dark-display:none;}
+.main-area{
+    background-color:rgba(200,200,200, 0.15);
+    position:relative;height:100%;width:100%;overflow-y:hidden;overflow-x:hidden;
+}
+.flow-theme-dark .main-area {--flow-input-bg:#161927;}
+.flow-theme-light .menu li.active{--fa-icon-color:#FFF;color:#FFF}
+.logo.dark{display:var(--logo-dark-display, initial)}
+.logo.light{display:var(--logo-light-display, initial)}
+.control{display:none;}
+[for][slot='header']:not(.active){display:none}
+.h-box{display:flex;}
+.h-box.align-start{align-items:start;}
+.form{
+	max-width:500px;display:flex;flex-direction:column;
+}
+.form.center{margin:auto}
+.p-20{padding:20px}
+.p-30{padding:30px}
+flow-select{margin:8px}
+flow-select.no-h-margin{margin-left:0px;margin-right:0px;}
