@@ -10,8 +10,6 @@ const fastify = require('fastify')({ logger: false })
 const fs = require("fs");
 const args = utils.args();
 
-
-
 class KaspaFaucet extends EventEmitter{
 	constructor(appFolder, opt={}){
 		super();
@@ -19,6 +17,7 @@ class KaspaFaucet extends EventEmitter{
 			port:3000
 		}, opt)
 		this.appFolder = appFolder;
+		this.config = utils.getConfig(path.join(appFolder, "config", "kaspa-faucet-website"));
 	}
 
 	async main() {
@@ -35,9 +34,18 @@ class KaspaFaucet extends EventEmitter{
 		await fastify.register(require('middie'));
 		await fastify.register(require('@aspectron/flow-fastify-socket-io'), {path:"/rpc"});
 
-		fastify.io.on("faucet-request", (args, callback)=>{
+		fastify.io.on("faucet-request", async (args, callback)=>{
 			console.log("fauset-request:args", args)
+			let {captcha="xxx"} = args;
+			let {error, result} = await utils.validateCaptcha({
+				captcha, secret:this.config.captcha.secret
+			})
+			console.log("captcha:err, result", error, result)
+			if(!result.success)
+				return callback(error)
+
 			callback({error:"TODO: at server"})
+
 		})
 
 

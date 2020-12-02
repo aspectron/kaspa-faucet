@@ -11,6 +11,7 @@ export class FaucetForm extends BaseElement {
 			:host{display:block;max-width:500px;margin:auto}
 			flow-select{margin:8px 0px;}
 			.error{color:red;min-height:30px;padding:5px;box-sizing:border-box;}
+			.captcha{min-height:50px;}
 		`
 	}
 
@@ -26,6 +27,9 @@ export class FaucetForm extends BaseElement {
 			<flow-input label="Amount" class="amount"
 				placeholder="10">
 			</flow-input>
+			<div class="captcha">
+				<slot name="captcha"></slot>
+			</div>
 			<div class="error">${this.errorMessage}</div>
 			<flow-btn primary @click="${this.submit}">SUBMIT</flow-btn>
 		`;
@@ -40,8 +44,11 @@ export class FaucetForm extends BaseElement {
 		let address = qS(".address").value;
 		let network = qS(".network").value;
 		let amount = qS(".amount").value;
+		let captcha = this.querySelector('.g-recaptcha .g-recaptcha-response')?.value;
 
-		console.log("address, network, amount:::", address, network, amount)
+		console.log("address, network, amount, captcha:::", {
+			address, network, amount, captcha
+		})
 
 		if(!address)
 			return this.setError("Please enter address");
@@ -49,11 +56,13 @@ export class FaucetForm extends BaseElement {
 		amount = parseFloat(amount||"", 10);
 		if(isNaN(amount) || !amount || amount<1 || amount>1000)
 			return this.setError("Please enter amount between 1-1000");
+		//if(!captcha)
+		//	return
 
 		this.setError(false);
 
 		app.rpc.dispatch("faucet-request", {
-			address, network, amount
+			address, network, amount, captcha
 		},(err, result)=>{
 			if(err){
 				this.setError(err);
@@ -72,9 +81,14 @@ export class FaucetForm extends BaseElement {
 		}
 
 		this.errorMessage = err.error||err;
+	}
+
+	onReCaptchaReady(){
 
 	}
 
 }
 
-FaucetForm.define("faucet-form");
+FaucetForm.define("faucet-form",{
+	"window.grecaptcha":"https://www.google.com/recaptcha/api.js?onload=OnReCaptchaLoad&render=explicit"
+});
