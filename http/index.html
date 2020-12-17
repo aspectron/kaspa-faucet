@@ -30,6 +30,7 @@
 	<kaspa-app class="flex" no-drawer>
 		<img slot="header" src="/images/logo/logo-bright.png" class="logo light" />
 		<img slot="header" src="/images/logo/logo-dark.png" class="logo dark" />
+		
 		<!--flow-app-drawer slot="drawer" class="left-area">
 			<ul class="menu" id="left-menu">
 				<li data-menu="home" class="active" title="Home">
@@ -40,15 +41,14 @@
 		</flow-app-drawer-->
 		<div slot="main" class="main-area flex sbar">
 			<div for="home" class="tab-content">
-				<div class="p-30">
-					<h1>Home Page</h1>
-					<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-				</div>
+				
 				<faucet-form>
 					<div slot="captcha" class="g-recaptcha" 
 						data-sitekey="6LeGJSoTAAAAAKtLbjbdiIQTFK9tYLqyRx0Td-MA"></div>
 				</faucet-form>
+				<kaspa-info></kaspa-info>
 			</div>
+			
 		</div>
 	</kaspa-app>
 </body>

@@ -1,6 +1,7 @@
 import '/style/style.js';
 import {dpc, camelCase, html, UID, FlowApp} from '/flow/flow-ux/flow-ux.js';
 export *  from './faucet-form.js';
+export *  from './kaspa-info.js';
 
 class App extends FlowApp {
 	constructor(){

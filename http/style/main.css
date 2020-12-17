@@ -8,10 +8,11 @@ body.loading:after{
 	min-height:100vh;
 }
 #tabs{--flow-tab-font-weight:normal;--flow-tab-font-size:1.2rem;}
-.logo{width:100px;display:inline-block;
+.logo{display:inline-block;
 	align-self:flex-start;object-fit: contain;
-    object-position: left center;
+    object-position: left center;margin:auto;
 }
+
 .menu{padding:20px 0px;list-style:none}
 .menu li{padding:8px 15px;font-size:1rem;user-select:none;}
 .menu li:not(.disabled):not(.active):hover{
@@ -36,6 +37,7 @@ body:not(.drawer-opened) flow-app-drawer li .text{display:none}
 body:not(.flow-theme-light){--logo-light-display:none;}
 body:not(.flow-theme-dark){--logo-dark-display:none;}
 .main-area{
+	display:flex; flex-direction:row;justify-content:center;
     background-color:rgba(200,200,200, 0.15);
     position:relative;height:100%;width:100%;overflow-y:hidden;overflow-x:hidden;
 }
@@ -52,6 +54,124 @@ body:not(.flow-theme-dark){--logo-dark-display:none;}
 }
 .form.center{margin:auto}
 .p-20{padding:20px}
-.p-30{padding:30px}
+.p-30{display:flex; max-width:1000px;font-size: 18px; padding:30px;}
 flow-select{margin:8px}
 flow-select.no-h-margin{margin-left:0px;margin-right:0px;}
+
+
+body.flow-theme-light{
+    --color-l-offset:0%;
+    --color-l-offset-more:48%;
+    --color-box-active-border-color:#b1b1b1;
+    --flow-box-shadow:0 2px 2px 0 rgba(10,10,10,.14),
+            0 3px 1px -2px rgba(10,10,10,.2),
+            0 1px 5px 0 rgba(10,10,10,.12);
+  
+    --flow-background-inverse: #FFF;
+    --flow-background-inverse-soft: #CCC;
+    --flow-background-color: #131723;/*#232323;*/
+    color: #b1b1b1;
+    --flow-color: #b1b1b1;
+    --flow-primary-color: #787b86;
+    --flow-tab-bg-top: #363537;
+    --flow-tab-bg-bottom: #363537;
+    --flow-tab-active-bg-top: #232323; /* can not have this different color as tab can be as high as multiple rows... */
+    --flow-tab-active-bg-bottom: #232323;
+    --flow-checkbox-checked-bg:#2f2f2f;
+    --flow-list-item-border:1px solid #585858;
+    --flow-list-item-active-border:1px solid var(--flow-primary-color);
+    --flow-list-item-hover-bg:#585858;
+    --flow-list-item-active-bg:var(--flow-primary-color);
+    --flow-list-item-active-color:#FFF;
+    --flow-data-field-value: #fff;
+    --flow-data-field-caption: #ccc;
+    --flow-data-field-caption-shadow: rgba(209, 142, 121);
+    /* aspect */
+    --flow-input-bg: #2f2f2f;
+    --flow-input-color: var(--flow-color, #b1b1b1);
+    --flow-input-placeholder: #555;
+    --flow-input-border: 0px;
+    --flow-input-label-border: 0px;
+    --flow-input-height: 40px;
+    --flow-input-font-size:0.75rem;
+    --flow-input-label-font-size: 0.6rem;
+    --flow-input-font-size:0.7rem;
+    --flow-input-font-weight:normal;
+    --flow-input-line-height:80%;
+    --flow-select-margin: 5px 5px;
+    --flow-select-border: var(--flow-input-border);
+    --flow-select-label-border: 0px;
+    --flow-select-label-font-size: 0.6rem;
+    --flow-select-selected-min-height: 40px;
+    --flow-select-input-height: 40px;
+	--flow-select-selected-min-width: 200px;
+	--flow-btn-hover-border-color:  var(--flow-primary-color);
+	--flow-btn-hover-primary-bg-color:white;
+	--flow-btn-hover-primary-color: var(--flow-primary-color);
+	--flow-btn-border-color: none;
+    --flow-btn-border-width: 1.5px;
+    --flow-btn-padding: 6px 6px;
+    --flow-btn-margin: 2px;
+    --flow-btn-font-weight: normal;
+    --flow-btn-font-size: 0.8rem;
+    --flow-btn-wrapper-min-width: 25px;
+    --flow-data-badge-container-border: 1px;
+    --flow-data-badge-value-font-size:10px;
+    --flow-data-badge-value-font-family:"Julius Sans One";
+    --flow-data-badge-value-font-weight:100;
+    --flow-data-badge-title-font-size:9px;
+    --flow-checkbox-outer-width:18px;
+    --flow-checkbox-outer-height:18px;
+    --flow-checkbox-outer-border:1px solid rgba(0,0,0,.54);
+    --flow-checkbox-outline-width:110%;
+    --flow-checkbox-outline-height:110%;
+    --flow-form-control-input-box-width:300px;
+    --flow-form-control-icon-box-width:18px;
+    --flow-form-control-icon-box-height:18px;
+    --flow-pagination-margin: 4px 4px;
+    --flow-border-hover-color:rgb(231, 106, 106);
+    --flow-link-hover-color:#015b77;
+	--flow-sunburst-graph-tip-color: white;
+    --flow-gridstack-placeholder-bg:#AAA;
+	--flow-input-box-shadow:10px 10px 30px  rgba(0,0,0,0.05), -10px -10px 30px rgba(0,0,0,0.05);
+    background-color:#FFF;
+    --flow-color: #585858;
+    color: var(--flow-color);
+    --flow-primary-color:#828080;/*var(--flow-color);*/
+	--flow-border-color: rgb(29, 46, 46);
+	--flow-app-header-height: 100px;
+    --flow-app-header-bg:white;
+    --flow-app-drawer-bg: white;
+    --flow-list-item-active-bg:white;
+    --flow-list-item-hover-bg:#585858;
+    --flow-list-item-active-color:#585858;
+    --flow-background-inverse: #FFF;
+    --flow-background-inverse-soft:#838383;
+    --flow-background-color:var(--flow-color);
+    --panel-bg:#FFF;
+    --flow-input-bg:white;
+    --flow-input-color: #585858;
+    --flow-btn-hover-bg-color:var(--finfr-order-entry-primary-color);
+    --flow-btn-hover-color: #fff;
+    --flow-terminal-bg-color:var(--panel-bg);
+    --flow-terminal-color:var(--flow-color);
+    --flow-font-family: "Trebuchet MS";
+    --flow-data-badge-font-family: "Exo 2";
+    --flow-data-badge-value-font-family:"Exo 2";
+    --flow-data-badge-font-weight:normal;
+    --flow-menu-item-selected-bg: #fff;
+    --flow-link-color: #3289f9;
+    --flow-link-hover-color:rgb(0, 223, 255);
+    --flow-link-font-family: "Open Sans";
+    --flow-link-font-weight: normal;
+    --flow-dropdown-bg: white;
+    --flow-appdrawer-btn-bg: white;
+    --flow-menu-item-bg: #f5f4f4;
+    --flow-dialog-background-color: white;
+    --flow-menu-item-selected-color:var(--flow-color);
+    --flow-checkbox-checked-color: white;
+  
+
+}
+
+

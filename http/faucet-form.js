@@ -8,10 +8,10 @@ export class FaucetForm extends BaseElement {
 	}
 	static get styles(){
 		return css`
-			:host{display:block;max-width:500px;margin:auto}
+			:host{display:block;max-width:500px;margin:auto;margin-top:50px;}
 			flow-select{margin:8px 0px;}
 			.error{color:red;min-height:30px;padding:5px;box-sizing:border-box;}
-			.captcha{min-height:50px;}
+			.captcha{min-height:50px;margin-top:20px;}
 		`
 	}
 
