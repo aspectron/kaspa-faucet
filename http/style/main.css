@@ -87,8 +87,11 @@ body.flow-theme-light{
     --flow-data-field-caption: #ccc;
     --flow-data-field-caption-shadow: rgba(209, 142, 121);
     /* aspect */
-    --flow-input-bg: #2f2f2f;
+   /* --flow-input-bg: #2f2f2f;
     --flow-input-color: var(--flow-color, #b1b1b1);
+    */
+    --flow-input-bg:white;
+    --flow-input-color: #585858;
     --flow-input-placeholder: #555;
     --flow-input-border: 0px;
     --flow-input-label-border: 0px;
@@ -149,8 +152,7 @@ body.flow-theme-light{
     --flow-background-inverse-soft:#838383;
     --flow-background-color:var(--flow-color);
     --panel-bg:#FFF;
-    --flow-input-bg:white;
-    --flow-input-color: #585858;
+   
     --flow-btn-hover-bg-color:var(--finfr-order-entry-primary-color);
     --flow-btn-hover-color: #fff;
     --flow-terminal-bg-color:var(--panel-bg);
