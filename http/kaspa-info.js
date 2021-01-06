@@ -8,7 +8,7 @@ export class KaspaInfo extends BaseElement {
 	}
 	static get styles(){
 		return css`
-			:host{display:block;max-width:1000px;margin:auto;margin-top:50px;}
+			:host{display:block;max-width:1000px;margin:auto;margin-top:100px;}
             .info {display:flex;flex-direction:column;justify-content:center;margin:50px;}
             .info-title { font-size:24px;font-weight:bold;text-align:center;}
             .info-content {padding:10px;font-size:18px;}
