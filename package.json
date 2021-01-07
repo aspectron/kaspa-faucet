@@ -8,6 +8,7 @@
 	"dependencies": {
 		"@webcomponents/webcomponentsjs": "*",
 		"@aspectron/flow-ux": "aspectron/flow-ux",
+		"@aspectron/flow-http": "*",
 		"@aspectron/flow-router": "aspectron/flow-router",
 		"@aspectron/flow-utils": "*",
 		"@aspectron/flow-fastify-socket-io": "aspectron/flow-fastify-socket-io",
@@ -16,7 +17,13 @@
 		"socket.io": "*",
 		"fastify": "*",
 		"serve-static": "*",
-		"middie": "*"
+		"middie": "*",
+		"cookie": "*",
+		"cookie-signature": "*",
+		"express": "*",
+		"express-session": "*",
+		"sockjs-client": "*",
+		"sockjs": "*"
 	},
 	"repository": {
 		"type": "git",

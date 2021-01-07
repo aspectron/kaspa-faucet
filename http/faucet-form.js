@@ -16,7 +16,7 @@ export class FaucetForm extends BaseElement {
 				--flow-input-font-weight: normal;
 				--flow-input-height:50px;
 				--flow-input-margin: 20px 0px;
-				--flow-input-padding: 10px 10px 10px 14px;
+				--flow-input-padding: 10px 10px 10px 16px;
 				--flow-select-label-font-size: 0.8rem;
 				--flow-select-input-height: 50px;
 				--flow-select-selected-min-height:50px;
@@ -100,6 +100,7 @@ export class FaucetForm extends BaseElement {
 			}
 
 			this.setError(false);
+			console.log("SERVER RESPONSE:", result);
 			FlowDialog.alert("Success", `We have sent ${result.amount} to ${address}.`);
 		})
 	}

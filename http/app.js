@@ -22,10 +22,10 @@ class App extends FlowApp {
 	}
 
 	async init(){
-		await this.initSocketIORPC({
-			args:{
-				transports:["websocket"]
-			}
+		await this.initSockjsRPC({
+			// args:{
+			// 	transports:["websocket"]
+			// }
 		});
 		//await this.initSocketIONATS();
 		await this.initUI();
