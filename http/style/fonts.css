@@ -35,3 +35,13 @@
 	font-family:'PT Mono';font-style:normal; font-weight:300;
 	src: url("/fonts/PTMono/PTMono-Regular.ttf") format('truetype');
 }
+
+@font-face {
+	font-family:'IBM Plex Sans';
+	src: url("/fonts/IBMPlexSans/IBMPlexSans-Regular.ttf") format('truetype');
+}
+
+@font-face {
+	font-family:'IBM Plex Sans Condensed';
+	src: url("/fonts/IBMPlexSansCondensed/IBMPlexSansCondensed-Regular.ttf") format('truetype');
+}

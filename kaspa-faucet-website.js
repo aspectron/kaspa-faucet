@@ -1,12 +1,9 @@
 const path = require('path');
 const crypto = require('crypto');
 const EventEmitter = require("events");
-const socketio = require('socket.io');
 const FlowRouter = require('@aspectron/flow-router');
 const utils = require('@aspectron/flow-utils');
 require("colors");
-const serveStatic = require('serve-static')
-const fastify = require('fastify')({ logger: false })
 const fs = require("fs");
 const args = utils.args();
 const sockjs = require('sockjs');
@@ -31,15 +28,6 @@ class KaspaFaucet extends EventEmitter{
 		}, opt)
 		this.appFolder = appFolder;
 		this.config = utils.getConfig(path.join(appFolder, "config", "kaspa-faucet-website"));
-	}
-
-	async main() {
-		//await this.initNATS();
-		await this.initHttp();
-	}
-
-	async initNATS() {
-
 	}
 
 	async initHttp(){
@@ -68,8 +56,6 @@ class KaspaFaucet extends EventEmitter{
 			let {app} = args;
 			app.use(bodyParser.json())
 			app.use(bodyParser.urlencoded({ extended: true }))
-			//this.log("init::app", app.options)
-
 			
 			let rootFolder = this.appFolder;
 
@@ -87,36 +73,32 @@ class KaspaFaucet extends EventEmitter{
 			router.init();
 		});
 
-	
-
 		flowHttp.init();
+	}
 
 
-		// fastify.use('/', serveStatic(path.join(this.appFolder, '/http')))
 
-		// const start = async () => {
-		// 	try {
-		// 		await fastify.listen(this.opt.port)
-		// 		fastify.log.info(`server listening on ${fastify.server.address().port}`)
-		// 	} catch (err) {
-		// 		fastify.log.error(err)
-		// 		process.exit(1)
-		// 	}
-		// }
-		// start()
+	async main() {
+		//await this.initNATS();
+		await this.initHttp();
 
-
+		const { flowHttp } = this;
 
 		let request = flowHttp.socket.subscribe("faucet-request");
 		(async ()=>{
 			for await(const msg of request) {
-				console.log("MESSAGE: ",msg.data);
+				console.log("MESSAGE: ",msg.data, "FROM IP:", msg.ip);
 				msg.respond({nat:123});
 			}
 		})();
 
-
+		setInterval(()=>{
+			let balance = Math.random();
+			console.log('posting balance update', balance);
+			flowHttp.socket.publish('balance', { balance })
+		}, 1000);
 	}
+
 }
 
 (async () => {

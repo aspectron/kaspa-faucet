@@ -10,7 +10,7 @@ body.loading:after{
 #tabs{--flow-tab-font-weight:normal;--flow-tab-font-size:1.2rem;}
 .logo{display:inline-block;
 	align-self:flex-start;object-fit: contain;
-    object-position: left center;margin:auto;
+    object-position: left center;
 }
 
 .menu{padding:20px 0px;list-style:none}
@@ -40,6 +40,7 @@ body:not(.flow-theme-dark){--logo-dark-display:none;}
 	display:flex; flex-direction:row;justify-content:center;
     background-color:rgba(200,200,200, 0.15);
     position:relative;height:100%;width:100%;overflow-y:hidden;overflow-x:hidden;
+    padding-top: 24px;
 }
 .flow-theme-dark .main-area {--flow-input-bg:#161927;}
 .flow-theme-light .menu li.active{--fa-icon-color:#FFF;color:#FFF}
@@ -143,14 +144,14 @@ body.flow-theme-light{
     --flow-primary-color:#828080;/*var(--flow-color);*/
 	--flow-border-color: rgb(29, 46, 46);
 	--flow-app-header-height: 100px;
-    --flow-app-header-bg:white;
+    --flow-app-header-bg:rgba(200,200,200, 0.15);
     --flow-app-drawer-bg: white;
     --flow-list-item-active-bg:white;
     --flow-list-item-hover-bg:#585858;
     --flow-list-item-active-color:#585858;
     --flow-background-inverse: #FFF;
     --flow-background-inverse-soft:#838383;
-    --flow-background-color:var(--flow-color);
+--flow-background-color:var(--flow-color);
     --panel-bg:#FFF;
    
     --flow-btn-hover-bg-color:var(--finfr-order-entry-primary-color);
@@ -177,3 +178,29 @@ body.flow-theme-light{
 }
 
 
+[row] {
+    display: flex;
+    flex-direction: row;
+}
+
+[col] {
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.balance-wrapper {
+    width: 50%;
+}
+
+.form-wrapper {
+    width: 50%;
+    max-width: 600px;
+    align-items: flex-start;
+}
+
+
+.logo {
+    display: block;
+    max-width: 48px;
+}

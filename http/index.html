@@ -27,10 +27,7 @@
 	<svg style="display:none">
 		<use href="/fonts/fontawesome/sprites/light.svg#home" />
 	</svg>
-	<kaspa-app class="flex" no-drawer>
-		<img slot="header" src="/images/logo/logo-bright.png" class="logo light" />
-		<img slot="header" src="/images/logo/logo-dark.png" class="logo dark" />
-		
+	<kaspa-app class="flex" no-drawer no-header>
 		<!--flow-app-drawer slot="drawer" class="left-area">
 			<ul class="menu" id="left-menu">
 				<li data-menu="home" class="active" title="Home">
@@ -40,13 +37,19 @@
 			</ul>
 		</flow-app-drawer-->
 		<div slot="main" class="main-area flex sbar">
-			<div for="home" class="tab-content">
-				
-				<faucet-form>
-					<div slot="captcha" class="g-recaptcha" 
-						data-sitekey="6LeGJSoTAAAAAKtLbjbdiIQTFK9tYLqyRx0Td-MA"></div>
-				</faucet-form>
-				<kaspa-info></kaspa-info>
+			<div for="home" row class="tab-content">
+				<div col class="balance-wrapper">
+					<img src="/images/logo/logo-bright.png" class="logo" />
+					<faucet-balance></faucet-balance>
+					<faucet-transactions></faucet-transactions>
+				</div>
+				<div col class='form-wrapper'>
+					<faucet-info></faucet-info>
+					<faucet-form>
+						<div slot="captcha" class="g-recaptcha" 
+							data-sitekey="6LeGJSoTAAAAAKtLbjbdiIQTFK9tYLqyRx0Td-MA"></div>
+					</faucet-form>
+				</div>
 			</div>
 			
 		</div>

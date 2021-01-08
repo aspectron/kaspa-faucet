@@ -8,7 +8,7 @@ export class FaucetForm extends BaseElement {
 	}
 	static get styles(){
 		return css`
-			:host{display:block;max-width:500px;margin:auto;margin-top:50px;
+			:host{display:block;
 				--flow-input-label-font-size: 0.8rem;
 				--flow-input-label-padding: 5px 7px;
 				--flow-input-font-family: 'Consolas';
@@ -37,14 +37,35 @@ export class FaucetForm extends BaseElement {
 	constructor(){
 		super();
 	}
+
+	onlineCallback() {
+		console.log(flow.app);
+		
+		const { rpc } = flow.app;
+		console.log("I AM CONNECTED!");
+
+		this.balanceUpdates = rpc.subscribe('balance');
+		(async()=>{
+			for await(const msg of this.balanceUpdates) {
+				const { balance } = msg.data;
+				console.log('balance update:',balance);
+			}
+		})().then();
+
+	}
+	
+	offlineCallback() {
+		console.log("I AM DISCONNECTED!");
+		this.balanceUpdates.stop();
+	}
 	
 
 	render(){
 		
 		return html`
 			<div class="message">Enter your address and the amount of Kaspa you want to receive</div>
-			<flow-input label="Address" class="address"></flow-input>
-			<flow-input label="Amount" class="amount"></flow-input>
+			<flow-input label="Address" class="address" value="kaspatest:123123123"></flow-input>
+			<flow-input label="Amount" class="amount" value="12.99"></flow-input>
 			<flow-select label="Network" selected="mainnet" class="network">
 				<flow-menu-item value="testnet">TESTNET</flow-menu-item>
 				<flow-menu-item value="mainnet">MAINNET</flow-menu-item>
@@ -67,31 +88,24 @@ export class FaucetForm extends BaseElement {
 		let amount = qS(".amount").value;
 		let captcha = this.querySelector('.g-recaptcha .g-recaptcha-response')?.value;
 		//kaspatest:qq0nvlmn07f6edcdfynt4nu4l4r58rkquuvgt635ac
-		let match = /^kaspa(test|main|dev):[1-9A-HJ-NP-Za-km-z]/.test(address);
-	
+		console.log({ address, network, amount, captcha });
 
-		if(match == false){
-			
+		if(!/^kaspa(test|main|dev):[1-9A-HJ-NP-Za-km-z]/.test(address)){
 			return this.setError("Invalid Address");
 		}
-
-
-		console.log("address, network, amount, captcha:::", {
-			address, network, amount, captcha
-		})
 
 		if(!address)
 			return this.setError("Please enter address");
 
-		amount = parseFloat(amount||"", 10);
-		if(isNaN(amount) || !amount || amount<1 || amount>1000)
+		amount = parseFloat(amount) || 0;
+		if(!amount || amount<1 || amount>1000)
 			return this.setError("Please enter amount between 1-1000");
 		//if(!captcha)
 		//	return
 
 		this.setError(false);
 
-		app.rpc.dispatch("faucet-request", {
+		app.rpc.request("faucet-request", {
 			address, network, amount, captcha
 		},(err, result)=>{
 			if(err){

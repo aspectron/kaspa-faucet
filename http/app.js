@@ -1,12 +1,15 @@
 import '/style/style.js';
 import {dpc, camelCase, html, UID, FlowApp} from '/flow/flow-ux/flow-ux.js';
 export *  from './faucet-form.js';
-export *  from './kaspa-info.js';
+export *  from './faucet-info.js';
+export *  from './faucet-balance.js';
+export *  from './faucet-transactions.js';
+export *  from './kaspa-transaction.js';
 
 class App extends FlowApp {
 	constructor(){
 		super();
-		window.app = this;
+		// window.app = this;
 		//this.initSiteConfig(config)
 		this.opt = {
 
