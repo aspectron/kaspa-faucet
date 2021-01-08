@@ -91,24 +91,33 @@ body.flow-theme-light{
    /* --flow-input-bg: #2f2f2f;
     --flow-input-color: var(--flow-color, #b1b1b1);
     */
+    --flow-input-label-padding: 5px 7px;
+    --flow-input-label-font-size: 0.8rem;
+    --flow-input-label-border: 0px;
+    --flow-input-font-family: 'Consolas';
+    --flow-input-font-size:14px;
+    --flow-input-font-weight: normal;
+    --flow-input-height:50px;
+    --flow-input-line-height: 1;
+    --flow-input-margin: 20px 0px;
+    --flow-input-padding: 10px 10px 10px 16px;
     --flow-input-bg:white;
     --flow-input-color: #585858;
     --flow-input-placeholder: #555;
     --flow-input-border: 0px;
-    --flow-input-label-border: 0px;
-    --flow-input-height: 40px;
-    --flow-input-font-size:0.75rem;
-    --flow-input-label-font-size: 0.6rem;
-    --flow-input-font-size:0.7rem;
-    --flow-input-font-weight:normal;
-    --flow-input-line-height:80%;
+    --flow-input-box-shadow:10px 10px 30px  rgba(0,0,0,0.05), -10px -10px 30px rgba(0,0,0,0.05);
+    
+    --flow-select-label-font-size: 0.8rem;
+    --flow-select-input-height: 50px;
+    --flow-select-selected-min-height:50px;
+    --flow-select-selected-height:50px;	
+    --flow-select-input-padding:18px 30px 10px 14px;
+    --flow-select-margin: 20px 0px;
     --flow-select-margin: 5px 5px;
     --flow-select-border: var(--flow-input-border);
     --flow-select-label-border: 0px;
-    --flow-select-label-font-size: 0.6rem;
-    --flow-select-selected-min-height: 40px;
-    --flow-select-input-height: 40px;
-	--flow-select-selected-min-width: 200px;
+    --flow-select-selected-min-width: 200px;
+    
 	--flow-btn-hover-border-color:  var(--flow-primary-color);
 	--flow-btn-hover-primary-bg-color:white;
 	--flow-btn-hover-primary-color: var(--flow-primary-color);
@@ -137,7 +146,6 @@ body.flow-theme-light{
     --flow-link-hover-color:#015b77;
 	--flow-sunburst-graph-tip-color: white;
     --flow-gridstack-placeholder-bg:#AAA;
-	--flow-input-box-shadow:10px 10px 30px  rgba(0,0,0,0.05), -10px -10px 30px rgba(0,0,0,0.05);
     background-color:#FFF;
     --flow-color: #585858;
     color: var(--flow-color);

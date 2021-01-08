@@ -9,22 +9,7 @@ export class FaucetForm extends BaseElement {
 	static get styles(){
 		return css`
 			:host{display:block;
-				--flow-input-label-font-size: 0.8rem;
-				--flow-input-label-padding: 5px 7px;
-				--flow-input-font-family: 'Consolas';
-				--flow-input-font-size:14px;
-				--flow-input-font-weight: normal;
-				--flow-input-height:50px;
-				--flow-input-margin: 20px 0px;
-				--flow-input-padding: 10px 10px 10px 16px;
-				--flow-select-label-font-size: 0.8rem;
-				--flow-select-input-height: 50px;
-				--flow-select-selected-min-height:50px;
-				--flow-select-selected-height:50px;	
-				--flow-input-line-height: 1;
-				--flow-select-input-padding:16px 30px 10px 14px;
-				--flow-select-margin: 20px 0px;
-
+				
 			}
 			flow-select{margin:8px 0px;}
 			.error{color:red;min-height:30px;padding:5px;box-sizing:border-box;}
