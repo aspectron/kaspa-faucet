@@ -28,7 +28,7 @@ export class FaucetBalance extends BaseElement {
 		this.balanceUpdates = rpc.subscribe('balance');
 		(async()=>{
 			for await(const msg of this.balanceUpdates) {
-                this.balance = msg.data.balance;
+                this.balance = msg.data.balance * 1e-8;
 			}
 		})().then();
 	}
@@ -44,7 +44,7 @@ export class FaucetBalance extends BaseElement {
         return html`
             <div class='wrapper'>
                 <div class='caption'>Faucet Balance</div>
-                <div class='balance'>${this.balance.toFixed(8)} KSP</div>
+                <div class='balance'>${flow.app.formatKSP(this.balance)} KSP</div>
             </div>
 		`;
 	}

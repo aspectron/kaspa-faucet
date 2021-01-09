@@ -24,19 +24,8 @@ export class FaucetForm extends BaseElement {
 	}
 
 	onlineCallback() {
-		console.log(flow.app);
-		
 		const { rpc } = flow.app;
 		console.log("I AM CONNECTED!");
-
-		this.balanceUpdates = rpc.subscribe('balance');
-		(async()=>{
-			for await(const msg of this.balanceUpdates) {
-				const { balance } = msg.data;
-				console.log('balance update:',balance);
-			}
-		})().then();
-
 	}
 	
 	offlineCallback() {
@@ -52,8 +41,10 @@ export class FaucetForm extends BaseElement {
 			<flow-input label="Address" class="address" value="kaspatest:123123123"></flow-input>
 			<flow-input label="Amount" class="amount" value="12.99"></flow-input>
 			<flow-select label="Network" selected="mainnet" class="network">
-				<flow-menu-item value="testnet">TESTNET</flow-menu-item>
-				<flow-menu-item value="mainnet">MAINNET</flow-menu-item>
+				<flow-menu-item value="kaspatest">TESTNET</flow-menu-item>
+				<flow-menu-item value="kaspa">MAINNET</flow-menu-item>
+				<flow-menu-item value="ksapadev">DEVNET</flow-menu-item>
+				<flow-menu-item value="kaspasim">SIMNET</flow-menu-item>
 			</flow-select>
 			<div class="captcha">
 				<slot name="captcha"></slot>

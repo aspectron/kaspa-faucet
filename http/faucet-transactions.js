@@ -9,11 +9,11 @@ export class FaucetTransactions extends BaseElement {
 	static get styles(){
 		return css`
 			:host{
-                display:block;margin:32px;
+                display:block;margin-left:32px; margin-top: 16px;
 
             }
             .caption { font-family : "Open Sans"; font-size: 14px; }
-            .transactions { font-family : "IBM Plex Sans Condensed"; font-size: 14px; margin-top: 4px;}
+            .transactions { /*font-family : "IBM Plex Sans Condensed"; font-size: 18px;*/ margin-top: 4px;}
 
 		`
 	}
@@ -21,16 +21,24 @@ export class FaucetTransactions extends BaseElement {
 	constructor(){
         super();
 		this.transactions = [];
-		for(let i = 0; i < 10; i++)
-			this.transactions.push({ amount : i+100 });
+		// for(let i = 0; i < 10; i++)
+		// 	this.transactions.push({ amount : i+100 });
 	}
 
 	onlineCallback() {
 		const { rpc } = flow.app;
-		this.transactionUpdates = rpc.subscribe('transaction');
+		this.transactionUpdates = rpc.subscribe('utxo-change');
 		(async()=>{
 			for await(const msg of this.transactionUpdates) {
-                this.transactions.push(msg.data.transaction);
+				const { added, removed } = msg.data;
+				removed.forEach(tx=>this.transactions.unshift(tx));
+				added.forEach(tx=>this.transactions.unshift(tx));
+				// console.log(this.transactions);
+				//this.transactions.push(msg.data.transaction);
+
+				while(this.transactions.length > 25)
+					this.transactions.pop();
+				this.requestUpdate();
 			}
 		})().then();
 	}
@@ -45,7 +53,7 @@ export class FaucetTransactions extends BaseElement {
                 <div class='caption'>Faucet Transactions</div>
                 <div class='transactions'>
                     ${
-                        this.transactions.reverse().map(tx => html`<kaspa-transaction .data=${tx}></kaspa-transaction>`)
+                        this.transactions.map(tx => html`<kaspa-transaction .data=${tx}></kaspa-transaction>`)
                     }
                 </div>
             </div>

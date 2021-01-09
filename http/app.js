@@ -126,6 +126,13 @@ class App extends FlowApp {
 		super.signoutCallback?.();
 		this.setMenu("home")
 	}
+
+	formatKSP(v) {
+		let [int,frac] = v.toFixed(8).split('.');
+		frac = frac.replace(/0+$/,'');
+		return frac ? `${int}.${frac}` : int;
+	}
+
 }
 
 App.define("kaspa-app");

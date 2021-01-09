@@ -14,16 +14,15 @@
 		"@aspectron/flow-fastify-socket-io": "aspectron/flow-fastify-socket-io",
 		"lit-element": "*",
 		"colors": "*",
-		"socket.io": "*",
-		"fastify": "*",
-		"serve-static": "*",
-		"middie": "*",
 		"cookie": "*",
 		"cookie-signature": "*",
 		"express": "*",
 		"express-session": "*",
 		"sockjs-client": "*",
-		"sockjs": "*"
+		"sockjs": "*",
+		"kaspa-wallet": "aspectron/kaspa-wallet",
+		"kaspa-grpc-node": "aspectron/kaspa-grpc-node",
+		"kaspa-grpc": "aspectron/kaspa-grpc"
 	},
 	"repository": {
 		"type": "git",

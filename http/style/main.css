@@ -11,6 +11,7 @@ body.loading:after{
 .logo{display:inline-block;
 	align-self:flex-start;object-fit: contain;
     object-position: left center;
+    max-width: 50%;
 }
 
 .menu{padding:20px 0px;list-style:none}
@@ -37,10 +38,11 @@ body:not(.drawer-opened) flow-app-drawer li .text{display:none}
 body:not(.flow-theme-light){--logo-light-display:none;}
 body:not(.flow-theme-dark){--logo-dark-display:none;}
 .main-area{
-	display:flex; flex-direction:row;justify-content:center;
+    display:flex; flex-direction:row;
+    xjustify-content:center;
     background-color:rgba(200,200,200, 0.15);
     position:relative;height:100%;width:100%;overflow-y:hidden;overflow-x:hidden;
-    padding-top: 24px;
+    /*padding-top: 24px;*/
 }
 .flow-theme-dark .main-area {--flow-input-bg:#161927;}
 .flow-theme-light .menu li.active{--fa-icon-color:#FFF;color:#FFF}
@@ -194,21 +196,27 @@ body.flow-theme-light{
 [col] {
     display: flex;
     flex-direction: column;
-    
 }
 
 .balance-wrapper {
-    width: 50%;
+    padding-top: 32px;
+    min-width: 50%;
 }
 
 .form-wrapper {
+    padding-top: 32px;
     width: 50%;
     max-width: 600px;
     align-items: flex-start;
 }
 
 
-.logo {
+.logo-col {
     display: block;
-    max-width: 48px;
+    max-width: 4px;
+    opacity: 0.1;
+}
+
+.content {
+    width: 100%;
 }

@@ -9,9 +9,25 @@ export class KaspaTransaction extends BaseElement {
 	static get styles(){
 		return css`
 			:host{
-                display:block;margin:32px;
+                display:block;margin:2px;
             }
-            .transaction { font-family : "IBM Plex Sans Condensed"; font-size: 14px; margin-top: 4px;}
+            .transaction { 
+				margin-top: 4px;
+			}
+
+            .caption { font-family : "Open Sans"; font-size: 14px; }
+            .value { font-family : "IBM Plex Sans Condensed"; font-size: 22px;  }
+			[row] {
+				display: flex;
+				flex-direction: row;
+			}
+			
+			[col] {
+				display: flex;
+				flex-direction: column;
+				margin: 4px;
+			}
+			
 		`;
 	}
 
@@ -20,26 +36,21 @@ export class KaspaTransaction extends BaseElement {
         this.transactions = [];
 	}
 
-	onlineCallback() {
-		const { rpc } = flow.app;
-		this.transactionUpdates = rpc.subscribe('transaction');
-		(async()=>{
-			for await(const msg of this.transactionUpdates) {
-                this.transactions.push(msg.data.transaction);
-			}
-		})().then();
-	}
-
-	offlineCallback() {
-		this.transactionUpdates.stop();
-	}
-
-
 	render(){
 
+		let tx = this.data;
+
         return html`
-            <div class='wrapper'>
-				${ JSON.stringify(this.data) }
+            <div class='transaction' row>
+				<div col>
+					<div class='value'>${flow.app.formatKSP(parseInt(tx.amount*1e-8))}</div>
+				</div>
+				<div col>
+					<div class='value'>${tx.blockBlueScore}</div>
+				</div>
+				<div col>
+					<div class='value'>${tx.transactionId.substring(0,14)}</div>
+				</div>
             </div>
 		`;
 	}
