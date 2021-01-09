@@ -200,12 +200,14 @@ body.flow-theme-light{
 
 .balance-wrapper {
     padding-top: 32px;
-    min-width: 50%;
+    width: 40%;
+    margin-left: 10%;
 }
 
 .form-wrapper {
     padding-top: 32px;
-    width: 50%;
+    width: 40%;
+    margin-right: 10%;
     max-width: 600px;
     align-items: flex-start;
 }

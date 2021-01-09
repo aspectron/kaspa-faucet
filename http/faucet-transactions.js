@@ -9,7 +9,7 @@ export class FaucetTransactions extends BaseElement {
 	static get styles(){
 		return css`
 			:host{
-                display:block;margin-left:32px; margin-top: 16px;
+                display:block; margin-top: 16px;
 
             }
             .caption { font-family : "Open Sans"; font-size: 14px; }
@@ -31,8 +31,14 @@ export class FaucetTransactions extends BaseElement {
 		(async()=>{
 			for await(const msg of this.transactionUpdates) {
 				const { added, removed } = msg.data;
-				removed.forEach(tx=>this.transactions.unshift(tx));
-				added.forEach(tx=>this.transactions.unshift(tx));
+				removed.forEach(tx=>{
+					tx.amount = -parseInt(tx.amount) * 1e-8;
+					this.transactions.unshift(tx); 
+				});
+				added.forEach(tx=>{
+					tx.amount = parseInt(tx.amount) * 1e-8;
+					this.transactions.unshift(tx);
+				});
 				// console.log(this.transactions);
 				//this.transactions.push(msg.data.transaction);
 

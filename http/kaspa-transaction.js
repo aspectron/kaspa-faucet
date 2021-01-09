@@ -16,7 +16,9 @@ export class KaspaTransaction extends BaseElement {
 			}
 
             .caption { font-family : "Open Sans"; font-size: 14px; }
-            .value { font-family : "IBM Plex Sans Condensed"; font-size: 22px;  }
+            .value { font-family : "Consolas"; font-size: 22px; color:#666; }
+            /*.value { font-family : "IBM Plex Mono"; font-size: 22px;  }*/
+            /*.value { font-family : "IBM Plex Sans Condensed"; font-size: 22px;  }*/
 			[row] {
 				display: flex;
 				flex-direction: row;
@@ -43,13 +45,13 @@ export class KaspaTransaction extends BaseElement {
         return html`
             <div class='transaction' row>
 				<div col>
-					<div class='value'>${flow.app.formatKSP(parseInt(tx.amount*1e-8))}</div>
+					<div class='value'>${(tx.amount>0?' ':'')+flow.app.formatKSP(tx.amount)} KSP</div>
 				</div>
 				<div col>
 					<div class='value'>${tx.blockBlueScore}</div>
 				</div>
 				<div col>
-					<div class='value'>${tx.transactionId.substring(0,14)}</div>
+					<div class='value'>${tx.transactionId.substring(0,20)}</div>
 				</div>
             </div>
 		`;

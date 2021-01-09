@@ -9,7 +9,7 @@ export class FaucetBalance extends BaseElement {
 	static get styles(){
 		return css`
 			:host{
-                display:block;margin:32px;
+                display:block;margin-top:32px;
                 
             }
             .caption { font-family : "Open Sans"; font-size: 14px; }
