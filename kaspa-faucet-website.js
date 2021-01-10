@@ -86,9 +86,21 @@ class KaspaFaucet extends EventEmitter{
 
 		await initKaspaFramework();
 
+		// support using --kaspa, --kaspatest --kaspadev --kaspasim from command line
+		let networkNames = Object.keys(Wallet.networkTypes);
+		const argv = process.argv.slice(2).map(v => v.replace(/^--/,''));
+		console.log('argv:',argv);
+		let filter = networkNames.filter(name => argv.includes(name));
+		console.log("networkNames",networkNames,'filter:',filter);
+
 		this.rpc = { }
 		this.wallets = { }
+
 		for (const {network,port} of Object.values(Wallet.networkTypes)) {
+			if(filter.length && !filter.includes(network)) {
+				console.log(`Skipping creation of '${network}'...`);
+				continue;
+			}
 			console.log(`Creating rpc for network '${network}' on port '${port}'`);
 			const rpc = this.rpc[network] = new RPC({
 				clientConfig:{
@@ -137,6 +149,16 @@ class KaspaFaucet extends EventEmitter{
 				}
 				else {
 					// TODO - send transaction
+					/*
+					let response = await wallet.submitTransaction({
+						toAddr: "kaspatest:qrhefqj5c80m59d9cdx4ssxw96vguvn9fgy6yc0qtd",
+						amount: 1000,
+						fee: 400
+					}, true).catch(async (error)=>{
+						console.log("\n\nerror", error)
+					})
+					*/
+					// =====================
 					msg.respond({ amount, address, network });
 					info.ts = ts;
 					info.available -= amount;
@@ -152,14 +174,19 @@ class KaspaFaucet extends EventEmitter{
 
 		for( const [network,wallet] of Object.entries(this.wallets)) {
 
+			wallet.syncVirtualSelectedParentBlueScore()
+			.catch(e=>{
+				console.log(`[${network}] syncVirtualSelectedParentBlueScore Error`, e)
+			})
+
 			wallet.on("blue-score-changed", (result)=>{
 				let {blueScore} = result;
-				console.log("blue-score-changed: result, blueScore:", result, blueScore)
+				console.log(`[${network}] blue-score-changed: result, blueScore:`, result, blueScore)
 				flowHttp.socket.publish(`blue-score-${network}`, { blueScore });
 			})
 
 			wallet.on("balance-update", (detail)=>{
-				console.log("wallet:balance-update", wallet.balance, detail);
+				console.log(`[${network}] wallet:balance-update`, wallet.balance, detail);
 				const { balance } = wallet;
 
 				//let txlist = [];
@@ -172,7 +199,7 @@ class KaspaFaucet extends EventEmitter{
 
 			let seq = 0;
 			wallet.on("utxo-change", (detail)=>{
-				console.log("wallet:utxo-change", detail);
+				console.log(`[${network}] wallet:utxo-change`,'added:', detail.added.entries(), 'removed:', detail.removed.entries());
 				let {added,removed} = detail;
 				//console.log("change",[...added.values()].flat(),removed);
 				added = [...added.values()].flat();
