@@ -36,7 +36,6 @@ export class FaucetBalance extends BaseElement {
 	}
 	
 	offlineCallback() {
-		console.log("I AM DISCONNECTED!");
 		this.balanceUpdates.stop();
 	}
 	

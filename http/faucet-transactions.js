@@ -11,7 +11,6 @@ export class FaucetTransactions extends BaseElement {
 		return css`
 			:host{
                 display:block; margin-top: 16px;
-
             }
             .caption { font-family : "Open Sans"; font-size: 14px; }
 			.headers { font-family : "Open Sans"; font-size: 10px; margin-top: 16px; display:flex; flex-direction: row; }
@@ -38,7 +37,8 @@ export class FaucetTransactions extends BaseElement {
 		this.transactionUpdates = rpc.subscribe(`utxo-change-${this.network}`);
 		(async()=>{
 			for await(const msg of this.transactionUpdates) {
-				const { added, removed } = msg.data;
+				const { added, removed, seq } = msg.data;
+				console.log({seq});
 				removed.forEach(tx=>{
 					tx.amount = -parseInt(tx.amount) * 1e-8;
 					this.transactions.unshift(tx); 
@@ -54,7 +54,8 @@ export class FaucetTransactions extends BaseElement {
 					this.transactions.pop();
 				this.requestUpdate();
 			}
-		})().then();
+		})().then(()=>{
+		});
 	}
 
 	offlineCallback() {

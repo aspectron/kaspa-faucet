@@ -1,4 +1,4 @@
-import {dpc, html, css, BaseElement} from '/flow/flow-ux/flow-ux.js';
+import {dpc, html, css, BaseElement, FlowFormat } from '/flow/flow-ux/flow-ux.js';
 
 export class FaucetForm extends BaseElement {
 	static get properties(){
@@ -27,12 +27,9 @@ export class FaucetForm extends BaseElement {
 
 	onlineCallback() {
 		const { rpc } = flow.app;
-		console.log("I AM CONNECTED!");
 	}
 	
 	offlineCallback() {
-		console.log("I AM DISCONNECTED!");
-		this.balanceUpdates.stop();
 	}
 	
 
@@ -62,9 +59,10 @@ export class FaucetForm extends BaseElement {
 	submit(){
 		let qS = this.renderRoot.querySelector.bind(this.renderRoot);
 		let address = qS(".address").value;
-		let network = qS(".network").value;
+		// let network = qS(".network").value;
 		let amount = qS(".amount").value;
 		let captcha = this.querySelector('.g-recaptcha .g-recaptcha-response')?.value;
+		let network = flow.app.network;
 		//kaspatest:qq0nvlmn07f6edcdfynt4nu4l4r58rkquuvgt635ac
 		console.log({ address, network, amount, captcha });
 
@@ -83,17 +81,24 @@ export class FaucetForm extends BaseElement {
 
 		this.setError(false);
 
-		app.rpc.request("faucet-request", {
+		flow.app.rpc.request("faucet-request", {
 			address, network, amount, captcha
 		},(err, result)=>{
+			console.log({err, result});
 			if(err){
-				this.setError(err);
-				return
+				if(err.error == 'limit') {
+					let { msec_to_reset, available } = err;
+					this.setError(`Unable to send funds: you have ${flow.app.formatKSP(available)} remaining. Your limit will be reset in ${FlowFormat.duration(msec_to_reset)}.`);
+				}
+				else {
+					this.setError(err.message || 'Unknown error');
+				}
+				return;
 			}
 
 			this.setError(false);
 			console.log("SERVER RESPONSE:", result);
-			FlowDialog.alert("Success", `We have sent ${result.amount} to ${address}.`);
+			FlowDialog.alert("Success", `We have successfully sent ${result.amount} to ${address}.`);
 		})
 	}
 

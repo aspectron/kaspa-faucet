@@ -21,7 +21,9 @@ const {FlowHttp} = require('@aspectron/flow-http')({
 });
 const { Wallet, initKaspaFramework } = require('kaspa-wallet');
 const { RPC } = require('kaspa-grpc-node');
-
+const DAY = 1000*60*60*24;
+const HOUR = 1000*60*60;
+const MIN = 1000*60;
 
 class KaspaFaucet extends EventEmitter{
 	constructor(appFolder, opt={}){
@@ -31,7 +33,7 @@ class KaspaFaucet extends EventEmitter{
 		}, opt)
 		this.appFolder = appFolder;
 		this.config = utils.getConfig(path.join(appFolder, "config", "kaspa-faucet-website"));
-
+		this.ip_limit_map = new Map();
 	}
 
 	async initHttp(){
@@ -103,18 +105,42 @@ class KaspaFaucet extends EventEmitter{
 	async main() {
 		//await this.initNATS();
 		await this.initHttp();
-
-		console.log("INIT KASPA +++++++++++++++++++");
 		await this.initKaspa();
-		console.log("POST INIT KASPA +++++++++++++++++++");
 
 		const { flowHttp } = this;
 
-		let request = flowHttp.socket.subscribe("faucet-request");
+		let requests = flowHttp.socket.subscribe("faucet-request");
 		(async ()=>{
-			for await(const msg of request) {
-				console.log("MESSAGE: ",msg.data, "FROM IP:", msg.ip);
-				msg.respond({nat:123});
+			for await(const msg of requests) {
+				let ts = Date.now();
+				const { data, ip } = msg;
+				console.log(`request[${ip}]: `, data);
+				const { address, network, amount, captcha } = data;
+				let user = this.ip_limit_map.get(ip);
+				if(!user) {
+					user = { };
+					this.ip_limit_map.set(ip,user);
+				}
+
+				if(!user[network])
+					user[network] = { ts };
+				let info = user[network];
+
+				if(ts - info.ts > DAY)
+					info.available = this.config.ksp_per_day_limit;
+				console.log({user});
+				if(info.available < amount) {
+
+					const msec_to_reset = (info.ts + DAY - Date.now());
+					console.log({msec_to_reset});
+					msg.error({ error : 'limit', message : `Unable to send funds`, network, ...info, msec_to_reset });
+				}
+				else {
+					// TODO - send transaction
+					msg.respond({ amount, address, network });
+					info.ts = ts;
+					info.available -= amount;
+				}
 			}
 		})();
 
@@ -144,13 +170,14 @@ class KaspaFaucet extends EventEmitter{
 				//flowHttp.socket.publish('transactions', { added, removed });
 			})
 
+			let seq = 0;
 			wallet.on("utxo-change", (detail)=>{
 				console.log("wallet:utxo-change", detail);
 				let {added,removed} = detail;
 				//console.log("change",[...added.values()].flat(),removed);
 				added = [...added.values()].flat();
 				removed = [...removed.values()].flat();
-				flowHttp.socket.publish(`utxo-change-${network}`, { added, removed });
+				flowHttp.socket.publish(`utxo-change-${network}`, { added, removed, seq : seq++ });
 			})
 		}
 	}
