@@ -128,7 +128,8 @@ class KaspaFaucet extends EventEmitter{
 
 			wallet.on("blue-score-changed", (result)=>{
 				let {blueScore} = result;
-				console.log("blue-score-changed:result, blueScore", result, blueScore)
+				console.log("blue-score-changed: result, blueScore:", result, blueScore)
+				flowHttp.socket.publish(`blue-score-${network}`, { blueScore });
 			})
 
 			wallet.on("balance-update", (detail)=>{
@@ -139,7 +140,7 @@ class KaspaFaucet extends EventEmitter{
 				// added = added.values().flat();
 				// removed = removed.values().flat();
 				//console.log('info',added,removed)
-				flowHttp.socket.publish('balance', { balance });
+				flowHttp.socket.publish(`balance-${network}`, { balance });
 				//flowHttp.socket.publish('transactions', { added, removed });
 			})
 
@@ -149,7 +150,7 @@ class KaspaFaucet extends EventEmitter{
 				//console.log("change",[...added.values()].flat(),removed);
 				added = [...added.values()].flat();
 				removed = [...removed.values()].flat();
-				flowHttp.socket.publish('utxo-change', { added, removed });
+				flowHttp.socket.publish(`utxo-change-${network}`, { added, removed });
 			})
 		}
 	}

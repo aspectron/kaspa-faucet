@@ -3,13 +3,14 @@ import {dpc, html, css, BaseElement} from '/flow/flow-ux/flow-ux.js';
 export class FaucetBalance extends BaseElement {
 	static get properties(){
 		return {
+			network : { type : String },
             balance : { type : Number }
 		}
 	}
 	static get styles(){
 		return css`
 			:host{
-                display:block;margin-top:32px;
+                display:block;
                 
             }
             .caption { font-family : "Open Sans"; font-size: 14px; }
@@ -20,12 +21,13 @@ export class FaucetBalance extends BaseElement {
 	
 	constructor(){
         super();
-        this.balance = 0;
+		this.balance = 0;
+		//this.network = flow.app.network;
 	}
 
 	onlineCallback() {
 		const { rpc } = flow.app;
-		this.balanceUpdates = rpc.subscribe('balance');
+		this.balanceUpdates = rpc.subscribe(`balance-${this.network}`);
 		(async()=>{
 			for await(const msg of this.balanceUpdates) {
                 this.balance = msg.data.balance * 1e-8;

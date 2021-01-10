@@ -36,17 +36,32 @@
 				</li>
 			</ul>
 		</flow-app-drawer-->
-		<div slot="main" class="main-area flex sbar">
+		<div slot="main" class="main-area flex sbar" col>
 			<div for="home" row class="content">
 				<div class="logo-col"><img src="/images/logo/logo-bright.png" xclass="logo" /></div>
 				<div col class="balance-wrapper">
 					
-					<faucet-balance></faucet-balance>
-					<faucet-transactions></faucet-transactions>
+					<faucet-balance network="kaspatest"></faucet-balance>
+					<faucet-transactions network="kaspatest"></faucet-transactions>
 				</div>
 				<div col class='form-wrapper'>
 					<faucet-info></faucet-info>
-					<faucet-form>
+					<faucet-form network="kaspatest">
+						<div slot="captcha" class="g-recaptcha" 
+							data-sitekey="6LeGJSoTAAAAAKtLbjbdiIQTFK9tYLqyRx0Td-MA"></div>
+					</faucet-form>
+				</div>
+			</div>
+			<div for="home" row class="content">
+				<div class="logo-col"><img src="/images/logo/logo-bright.png" xclass="logo" /></div>
+				<div col class="balance-wrapper">
+					
+					<faucet-balance network="kaspa"></faucet-balance>
+					<faucet-transactions network="kaspa"></faucet-transactions>
+				</div>
+				<div col class='form-wrapper'>
+					<faucet-info></faucet-info>
+					<faucet-form network="kaspa">
 						<div slot="captcha" class="g-recaptcha" 
 							data-sitekey="6LeGJSoTAAAAAKtLbjbdiIQTFK9tYLqyRx0Td-MA"></div>
 					</faucet-form>

@@ -1,5 +1,5 @@
 import '/style/style.js';
-import {dpc, camelCase, html, UID, FlowApp} from '/flow/flow-ux/flow-ux.js';
+import {dpc, camelCase, html, UID, FlowApp, FlowFormat } from '/flow/flow-ux/flow-ux.js';
 export *  from './faucet-form.js';
 export *  from './faucet-info.js';
 export *  from './faucet-balance.js';
@@ -7,8 +7,17 @@ export *  from './faucet-transactions.js';
 export *  from './kaspa-transaction.js';
 
 class App extends FlowApp {
+
+
+	static get properties(){
+		return {
+			network:{type:String}
+		}
+	}
 	constructor(){
 		super();
+
+		this.network = "kaspatest";
 		// window.app = this;
 		//this.initSiteConfig(config)
 		this.opt = {
@@ -23,6 +32,8 @@ class App extends FlowApp {
 			this.setMenu(menu, args, true);
 		});
 	}
+
+
 
 	async init(){
 		await this.initSockjsRPC({
@@ -128,9 +139,7 @@ class App extends FlowApp {
 	}
 
 	formatKSP(v) {
-		let [int,frac] = v.toFixed(8).split('.');
-		frac = frac.replace(/0+$/,'');
-		return frac ? `${int}.${frac}` : int;
+		return FlowFormat.crypto(v, { noTrailingZeros : true });
 	}
 
 }

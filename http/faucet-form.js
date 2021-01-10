@@ -4,6 +4,7 @@ export class FaucetForm extends BaseElement {
 	static get properties(){
 		return {
 			errorMessage:{type:String},
+			network:{type:String}
 		}
 	}
 	static get styles(){
@@ -21,6 +22,7 @@ export class FaucetForm extends BaseElement {
 	
 	constructor(){
 		super();
+		//this.network = flow.app.network;
 	}
 
 	onlineCallback() {
@@ -40,7 +42,7 @@ export class FaucetForm extends BaseElement {
 			<div class="message">Enter your address and the amount of Kaspa you want to receive</div>
 			<flow-input label="Address" class="address" value="kaspatest:123123123"></flow-input>
 			<flow-input label="Amount" class="amount" value="12.99"></flow-input>
-			<flow-select label="Network" selected="mainnet" class="network">
+			<flow-select label="Network" selected="${this.network}" class="network" @select=${this.networkChange}>
 				<flow-menu-item value="kaspatest">TESTNET</flow-menu-item>
 				<flow-menu-item value="kaspa">MAINNET</flow-menu-item>
 				<flow-menu-item value="ksapadev">DEVNET</flow-menu-item>
@@ -108,6 +110,10 @@ export class FaucetForm extends BaseElement {
 
 	}
 
+	networkChange({ detail : { network }}) {
+		flow.app.network = network;
+//		console.log(network);
+	}
 }
 
 FaucetForm.define("faucet-form",{

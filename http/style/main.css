@@ -12,6 +12,7 @@ body.loading:after{
 	align-self:flex-start;object-fit: contain;
     object-position: left center;
     max-width: 50%;
+    margin: 32px;
 }
 
 .menu{padding:20px 0px;list-style:none}
@@ -41,7 +42,10 @@ body:not(.flow-theme-dark){--logo-dark-display:none;}
     display:flex; flex-direction:row;
     xjustify-content:center;
     background-color:rgba(200,200,200, 0.15);
-    position:relative;height:100%;width:100%;overflow-y:hidden;overflow-x:hidden;
+    position:relative;
+    /*height:100%;*/
+    width:100%;
+    overflow-y:hidden;overflow-x:hidden;
     /*padding-top: 24px;*/
 }
 .flow-theme-dark .main-area {--flow-input-bg:#161927;}
@@ -199,13 +203,13 @@ body.flow-theme-light{
 }
 
 .balance-wrapper {
-    padding-top: 32px;
+    padding-top: 64px;
     width: 40%;
     margin-left: 10%;
 }
 
 .form-wrapper {
-    padding-top: 32px;
+    padding-top: 64px;
     width: 40%;
     margin-right: 10%;
     max-width: 600px;
@@ -217,6 +221,11 @@ body.flow-theme-light{
     display: block;
     max-width: 4px;
     opacity: 0.1;
+    
+}
+
+.logo-col img {
+    padding: 32px;
 }
 
 .content {

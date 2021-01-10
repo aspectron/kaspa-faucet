@@ -9,12 +9,16 @@ export class KaspaTransaction extends BaseElement {
 	static get styles(){
 		return css`
 			:host{
-                display:block;margin:2px;
+				display:block;margin:2px;
             }
             .transaction { 
 				margin-top: 4px;
 			}
-
+			.transaction :nth-child(1) { width: 80px;  text-align:center; }
+			.transaction :nth-child(2) { width: 120px; text-align:center; }
+			.transaction :nth-child(3) { width: 300px; }
+			.xx-transaction div { border: 1px solid red; }
+			
             .caption { font-family : "Open Sans"; font-size: 14px; }
             .value { font-family : "Consolas"; font-size: 22px; color:#666; }
             /*.value { font-family : "IBM Plex Mono"; font-size: 22px;  }*/
@@ -27,7 +31,6 @@ export class KaspaTransaction extends BaseElement {
 			[col] {
 				display: flex;
 				flex-direction: column;
-				margin: 4px;
 			}
 			
 		`;
@@ -44,15 +47,9 @@ export class KaspaTransaction extends BaseElement {
 
         return html`
             <div class='transaction' row>
-				<div col>
-					<div class='value'>${(tx.amount>0?' ':'')+flow.app.formatKSP(tx.amount)} KSP</div>
-				</div>
-				<div col>
-					<div class='value'>${tx.blockBlueScore}</div>
-				</div>
-				<div col>
-					<div class='value'>${tx.transactionId.substring(0,20)}</div>
-				</div>
+				<div class='value'>${(tx.amount>0?' ':'')+flow.app.formatKSP(tx.amount)}</div>
+				<div class='value'>${tx.blockBlueScore}</div>
+				<div class='value'>${tx.transactionId.substring(0,20)}</div>
             </div>
 		`;
 	}
