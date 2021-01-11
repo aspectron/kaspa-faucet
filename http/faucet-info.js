@@ -3,7 +3,8 @@ import {dpc, html, css, BaseElement} from '/flow/flow-ux/flow-ux.js';
 export class FaucetInfo extends BaseElement {
 	static get properties(){
 		return {
-			limit:{type:Number}
+            limit:{type:Number},
+            address:{type:String}
 		}
 	}
 	static get styles(){
@@ -16,7 +17,7 @@ export class FaucetInfo extends BaseElement {
     
     constructor() {
         super();
-        this.limit = 0;
+        this.limit = 1000;
     }
 
 	render(){
@@ -27,10 +28,10 @@ export class FaucetInfo extends BaseElement {
                     <p>Kaspa Faucet sends Kaspa to anyone requesting.</p>
                     <p>It has a defined address, where Kaspa is mined into. 
                     If the faucet address has enough Kaspa, it will send to an address you provide. </p>
+                    <p>Faucet can receive funds at the following address: ${this.address}</p>
                     <p>Requests are limited to the maximum of ${this.limit.toFixed()} KSP per IP address per 24 hours.</p>
                 </div>
             </div>
-
 
             <div class="info">
                 <flow-link></flow-link>
