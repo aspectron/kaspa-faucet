@@ -4,6 +4,7 @@ export class FaucetInfo extends BaseElement {
 	static get properties(){
 		return {
             limit:{type:Number},
+            network:{type:String},
             address:{type:String}
 		}
 	}
@@ -18,7 +19,28 @@ export class FaucetInfo extends BaseElement {
     constructor() {
         super();
         this.limit = 1000;
+        this.address = '';
     }
+
+
+	onlineCallback() {
+		const { rpc } = flow.app;
+		this.networkUpdates = rpc.subscribe(`networks`);
+		(async()=>{
+			for await(const msg of this.networkUpdates) {
+                const { networks } = msg.data;
+                this.address = networks[this.network];
+				// this.networks = networks;
+				// console.log("available networks:",networks);
+			}
+		})().then(()=>{
+		});
+	}
+
+	offlineCallback() {
+		this.networkUpdates.stop();
+	}
+
 
 	render(){
         return html`

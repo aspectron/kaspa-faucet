@@ -13,7 +13,7 @@ export class FaucetForm extends BaseElement {
 				
 			}
 			flow-select{margin:8px 0px;}
-			.error{color:red;min-height:30px;padding:5px;box-sizing:border-box;}
+			.error{color:red;min-height:30px;padding:16px;box-sizing:border-box;font-family:"Open Sans";font-size:16px;}
 			.captcha{min-height:50px;margin-top:20px;}
 			.message{margin:30px 0px;font-family:"Open Sans";font-size:16px;font-weight:normal;text-align:center;}
 			
@@ -37,7 +37,7 @@ export class FaucetForm extends BaseElement {
 		
 		return html`
 			<div class="message">Enter your address and the amount of Kaspa you want to receive:</div>
-			<flow-input label="Address" class="address" value="kaspatest:123123123"></flow-input>
+			<flow-input label="Address" class="address" value="kaspatest:qpuyhaxz2chn3lsvf8g7q5uvaezpp5m7pyny4k8tyq"></flow-input>
 			<flow-input label="Amount" class="amount" value="12.99"></flow-input>
 			<flow-select label="Network" selected="${this.network}" class="network" @select=${this.networkChange}>
 				<flow-menu-item value="kaspatest">TESTNET</flow-menu-item>
@@ -91,7 +91,7 @@ export class FaucetForm extends BaseElement {
 					this.setError(`Unable to send funds: you have ${flow.app.formatKSP(available)} remaining. Your limit will be reset in ${FlowFormat.duration(msec_to_reset)}.`);
 				}
 				else {
-					this.setError(err.message || 'Unknown error');
+					this.setError(err.toString());
 				}
 				return;
 			}

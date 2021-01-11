@@ -57,7 +57,7 @@ export class FaucetTransactions extends BaseElement {
 				// console.log(this.transactions);
 				//this.transactions.push(msg.data.transaction);
 
-				while(this.transactions.length > 25)
+				while(this.transactions.length > 1000)
 					this.transactions.pop();
 				this.requestUpdate();
 			}

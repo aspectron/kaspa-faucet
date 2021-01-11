@@ -143,6 +143,13 @@ class KaspaFaucet extends EventEmitter{
 				const { data, ip } = msg;
 				console.log(`request[${ip}]: `, data);
 				const { address, network, amount, captcha } = data;
+
+				if(!this.wallets[network]) {
+					msg.error({ message : `Unable to send funds` });
+					return;
+				}
+
+
 				let user = this.ip_limit_map.get(ip);
 				if(!user) {
 					user = { };
@@ -166,13 +173,13 @@ class KaspaFaucet extends EventEmitter{
 					// TODO - send transaction
 
 					try {
-						let response = await wallet.submitTransaction({
+						let response = await this.wallets[network].submitTransaction({
 							toAddr: address,
 							amount: amount,
 							fee: 400,
 						}, true);
 
-						msg.respond({ amount, address, network });
+						msg.respond({ amount, address, network, response });
 						info.ts = ts;
 						info.available -= amount;
 
