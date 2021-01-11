@@ -58,7 +58,7 @@ class KaspaFaucet extends EventEmitter{
 		this.flowHttp = flowHttp;
 
 
-		flowHttp.on("init::app", args=>{
+		flowHttp.on("app.init", args=>{
 			let {app} = args;
 			app.use(bodyParser.json())
 			app.use(bodyParser.urlencoded({ extended: true }))
@@ -95,6 +95,7 @@ class KaspaFaucet extends EventEmitter{
 
 		this.rpc = { }
 		this.wallets = { }
+		this.addresses = { }
 
 		for (const {network,port} of Object.values(Wallet.networkTypes)) {
 			if(filter.length && !filter.includes(network)) {
@@ -109,8 +110,8 @@ class KaspaFaucet extends EventEmitter{
 			});
 			console.log(`Creating wallet for network '${network}' on port '${port}'`);
 
-
 			this.wallets[network] = Wallet.fromMnemonic("wasp involve attitude matter power weekend two income nephew super way focus", { network, rpc });
+			this.addresses[network] = this.wallets[network].receiveAddress;
 		}
 	}
 
@@ -121,7 +122,22 @@ class KaspaFaucet extends EventEmitter{
 
 		const { flowHttp } = this;
 
-		let requests = flowHttp.socket.subscribe("faucet-request");
+		// this.flowHttp.on('socket.connect')
+
+		let socketConnections = flowHttp.sockets.events.subscribe('connect');
+		(async()=>{
+			for await(const event of socketConnections) {
+				console.log("")
+				//event.socket.write(JSON.stringify(['networks', addresses]));
+				event.socket.publish('networks', { networks : this.addresses });
+				// Object.entries(this.addresses).forEach(([network,address]) => {
+				// 	event.socket.emit(`address-${network}`, { address })
+				// })
+			}
+		})().then(()=>{ socketConnections.stop(); });
+
+
+		let requests = flowHttp.sockets.subscribe("faucet-request");
 		(async ()=>{
 			for await(const msg of requests) {
 				let ts = Date.now();
@@ -169,7 +185,7 @@ class KaspaFaucet extends EventEmitter{
 		// setInterval(()=>{
 		// 	let balance = Math.random();
 		// 	console.log('posting balance update', balance);
-		// 	flowHttp.socket.publish('balance', { balance })
+		// 	flowHttp.sockets.publish('balance', { balance })
 		// }, 1000);
 
 		for( const [network,wallet] of Object.entries(this.wallets)) {
@@ -182,7 +198,7 @@ class KaspaFaucet extends EventEmitter{
 			wallet.on("blue-score-changed", (result)=>{
 				let {blueScore} = result;
 				console.log(`[${network}] blue-score-changed: result, blueScore:`, result, blueScore)
-				flowHttp.socket.publish(`blue-score-${network}`, { blueScore });
+				flowHttp.sockets.publish(`blue-score-${network}`, { blueScore });
 			})
 
 			wallet.on("balance-update", (detail)=>{
@@ -193,8 +209,8 @@ class KaspaFaucet extends EventEmitter{
 				// added = added.values().flat();
 				// removed = removed.values().flat();
 				//console.log('info',added,removed)
-				flowHttp.socket.publish(`balance-${network}`, { balance });
-				//flowHttp.socket.publish('transactions', { added, removed });
+				flowHttp.sockets.publish(`balance-${network}`, { balance });
+				//flowHttp.sockets.publish('transactions', { added, removed });
 			})
 
 			let seq = 0;
@@ -204,7 +220,7 @@ class KaspaFaucet extends EventEmitter{
 				//console.log("change",[...added.values()].flat(),removed);
 				added = [...added.values()].flat();
 				removed = [...removed.values()].flat();
-				flowHttp.socket.publish(`utxo-change-${network}`, { added, removed, seq : seq++ });
+				flowHttp.sockets.publish(`utxo-change-${network}`, { added, removed, seq : seq++ });
 			})
 		}
 	}
