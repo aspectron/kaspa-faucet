@@ -40,12 +40,19 @@ export class FaucetTransactions extends BaseElement {
 				const { added, removed, seq } = msg.data;
 				console.log({seq});
 				removed.forEach(tx=>{
-					tx.amount = -parseInt(tx.amount) * 1e-8;
-					this.transactions.unshift(tx); 
+					//tx.amount = -parseInt(tx.amount) * 1e-8;
+					this.transactions.unshift({
+						...tx,
+						amount : -parseInt(tx.amount) * 1e-8
+					}); 
 				});
 				added.forEach(tx=>{
-					tx.amount = parseInt(tx.amount) * 1e-8;
-					this.transactions.unshift(tx);
+					// tx.amount = parseInt(tx.amount) * 1e-8;
+					// this.transactions.unshift(tx);
+					this.transactions.unshift({
+						...tx,
+						amount : parseInt(tx.amount) * 1e-8
+					}); 
 				});
 				// console.log(this.transactions);
 				//this.transactions.push(msg.data.transaction);
