@@ -1,4 +1,9 @@
 import {dpc, html, css, BaseElement} from '/flow/flow-ux/flow-ux.js';
+import {Decimal} from '/flow/flow-ux/extern/decimal.js';
+// import {BigNumber} from '/flow/flow-ux/resources/extern/bignumber.js/bignumber.mjs';
+
+// Decimal.set({ precision : 2, rounding : 4 });
+// console.log("Decimal:", Decimal('123.123456789999').toFixed(8));
 
 export class FaucetTransactions extends BaseElement {
 	static get properties(){
@@ -43,7 +48,7 @@ export class FaucetTransactions extends BaseElement {
 					//tx.amount = -parseInt(tx.amount) * 1e-8;
 					this.transactions.unshift({
 						...tx,
-						amount : -parseInt(tx.amount) * 1e-8
+						amount : Decimal(tx.amount).mul(1e-8).neg() //-BigInt(tx.amount) / BigInt(1e-8)
 					}); 
 				});
 				added.forEach(tx=>{
@@ -51,7 +56,8 @@ export class FaucetTransactions extends BaseElement {
 					// this.transactions.unshift(tx);
 					this.transactions.unshift({
 						...tx,
-						amount : parseInt(tx.amount) * 1e-8
+//						amount : BigInt(tx.amount) / BigInt(1e-8)
+						amount : Decimal(tx.amount).mul(1e-8) //-BigInt(tx.amount) / BigInt(1e-8)
 					}); 
 				});
 				// console.log(this.transactions);
