@@ -9,7 +9,8 @@ body.loading:after{
 }
 #tabs{--flow-tab-font-weight:normal;--flow-tab-font-size:1.2rem;}
 .logo{display:inline-block;
-	align-self:flex-start;object-fit: contain;
+    align-self:flex-start;
+    object-fit: contain;
     object-position: left center;
     max-width: 50%;
     margin: 32px;
@@ -231,3 +232,33 @@ body.flow-theme-light{
 .content {
     width: 100%;
 }
+
+.balance-wrapper::after {
+    content: "";
+    position: absolute;
+    margin-top:64px;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;  
+    opacity: 0.05; 
+    /*z-index: -1;*/
+    background: url(/images/logo/logo-bright.png);
+    background-repeat: no-repeat;
+/*border: 1px solid red;*/
+background-position: top center;
+
+    max-width: 50%;
+
+  }
+
+  /*
+.balance-wrapper {
+    background-image:
+      url(/images/logo/logo-bright.png);
+    background-size: 80% auto;
+    background-position: center;
+    background-color:rgba(255,255,255,0.5);
+  }
+
+  */

@@ -15,7 +15,7 @@ export class FaucetForm extends BaseElement {
 			flow-select{margin:8px 0px;}
 			.error{color:red;min-height:30px;padding:5px;box-sizing:border-box;}
 			.captcha{min-height:50px;margin-top:20px;}
-			.message{margin:30px 0px;font-family:"Exo 2";font-size:16px;font-weight:bold;text-align:center;}
+			.message{margin:30px 0px;font-family:"Open Sans";font-size:16px;font-weight:normal;text-align:center;}
 			
 		`
 	}
@@ -36,7 +36,7 @@ export class FaucetForm extends BaseElement {
 	render(){
 		
 		return html`
-			<div class="message">Enter your address and the amount of Kaspa you want to receive</div>
+			<div class="message">Enter your address and the amount of Kaspa you want to receive:</div>
 			<flow-input label="Address" class="address" value="kaspatest:123123123"></flow-input>
 			<flow-input label="Amount" class="amount" value="12.99"></flow-input>
 			<flow-select label="Network" selected="${this.network}" class="network" @select=${this.networkChange}>
