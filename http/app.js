@@ -142,6 +142,93 @@ class App extends FlowApp {
 		return FlowFormat.crypto(v, { noTrailingZeros : true });
 	}
 
+	onlineCallback() {
+		const { rpc } = flow.app;
+		this.networkUpdates = rpc.subscribe(`networks`);
+		(async()=>{
+			for await(const msg of this.networkUpdates) {
+				const { networks } = msg.data;
+				this.networks = networks;
+				// console.log({networks});
+			}
+		})().then(()=>{
+		});
+	}
+
+	offlineCallback() {
+		this.networkUpdates.stop();
+	}
+
+/*	
+	render(){
+		return html`
+		<div class="header"><slot name="logo"></slot><slot name="header"></slot></div>
+		<div class="header header-sm"><fa-icon class="menu-icon"
+			icon="${this['menu-icon'] || 'bars'}" 
+			@click="${this.toggleFloatingDrawer}"></fa-icon><slot 
+			name="header-sm"></slot></div>
+		<div class="body">
+			<div class="drawer sbar">
+			<div class="drawer-top">
+				<fa-icon class="drawer-close-icon"
+				icon="${this['drawer-close-icon'] || 'times'}" 
+				@click="${this.toggleFloatingDrawer}"></fa-icon>
+			</div>
+			<slot name="drawer"></slot></div>
+			<div class="main sbar">
+				<div class="wrapper">
+					${this.content()}<div 
+					class="main-mask" @click="${this.toggleFloatingDrawer}"></div>
+				</div>
+				<div class="footer">
+					<slot name="footer"></slot>
+				</div>
+			</div>
+		</div>
+		`
+	}
+
+	content() {
+		return html`
+		
+		<div slot="main" class="main-area flex sbar" col>
+			<div for="home" row class="content">
+				<div col class="balance-wrapper">
+					
+					<faucet-balance network="kaspatest"></faucet-balance>
+					<faucet-transactions network="kaspatest"></faucet-transactions>
+				</div>
+				<div col class='form-wrapper'>
+					<faucet-info></faucet-info>
+					<faucet-form network="kaspatest">
+						<div slot="captcha" class="g-recaptcha" 
+							data-sitekey="6LeGJSoTAAAAAKtLbjbdiIQTFK9tYLqyRx0Td-MA"></div>
+					</faucet-form>
+				</div>
+			</div>
+			<div for="home" row class="content">
+				<!-- div class="logo-col"><img src="/images/logo/logo-bright.png" xclass="logo" /></div -->
+				<div col class="balance-wrapper">
+					
+					<faucet-balance network="kaspa"></faucet-balance>
+					<faucet-transactions network="kaspa"></faucet-transactions>
+				</div>
+				<div col class='form-wrapper'>
+					<faucet-info></faucet-info>
+					<faucet-form network="kaspa">
+						<div slot="captcha" class="g-recaptcha" 
+							data-sitekey="6LeGJSoTAAAAAKtLbjbdiIQTFK9tYLqyRx0Td-MA"></div>
+					</faucet-form>
+				</div>
+			</div>
+			
+		</div>		
+		
+		
+		`;
+	}
+*/
+
 }
 
 App.define("kaspa-app");
