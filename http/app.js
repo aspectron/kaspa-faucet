@@ -149,7 +149,7 @@ class App extends FlowApp {
 			for await(const msg of this.networkUpdates) {
 				const { networks } = msg.data;
 				this.networks = networks;
-				// console.log({networks});
+				console.log("available networks:",networks);
 			}
 		})().then(()=>{
 		});

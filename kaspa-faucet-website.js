@@ -127,14 +127,13 @@ class KaspaFaucet extends EventEmitter{
 		let socketConnections = flowHttp.sockets.events.subscribe('connect');
 		(async()=>{
 			for await(const event of socketConnections) {
-				console.log("")
 				//event.socket.write(JSON.stringify(['networks', addresses]));
 				event.socket.publish('networks', { networks : this.addresses });
 				// Object.entries(this.addresses).forEach(([network,address]) => {
 				// 	event.socket.emit(`address-${network}`, { address })
 				// })
 			}
-		})().then(()=>{ socketConnections.stop(); });
+		})().then(()=>{ });
 
 
 		let requests = flowHttp.sockets.subscribe("faucet-request");
@@ -165,19 +164,27 @@ class KaspaFaucet extends EventEmitter{
 				}
 				else {
 					// TODO - send transaction
-					/*
-					let response = await wallet.submitTransaction({
-						toAddr: "kaspatest:qrhefqj5c80m59d9cdx4ssxw96vguvn9fgy6yc0qtd",
-						amount: 1000,
-						fee: 400
-					}, true).catch(async (error)=>{
-						console.log("\n\nerror", error)
-					})
-					*/
+
+					try {
+						let response = await wallet.submitTransaction({
+							toAddr: address,
+							amount: amount,
+							fee: 400,
+						}, true);
+
+						msg.respond({ amount, address, network });
+						info.ts = ts;
+						info.available -= amount;
+
+					} catch(ex) {
+						console.log(ex);
+						msg.respond(ex);
+					}
+					// .catch(async (error)=>{
+					// 	console.log("\n\nerror", error)
+					// })
+
 					// =====================
-					msg.respond({ amount, address, network });
-					info.ts = ts;
-					info.available -= amount;
 				}
 			}
 		})();
