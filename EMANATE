@@ -6,7 +6,69 @@ const E = new Emanator(__dirname, {
 	production: true,
 });
 
-const npm = await E.modules.npm();
+const go = await E.modules.go('go1.14.3');
+const git = await E.modules.git();
+const npm = await E.modules.npm({ production : true });
+// const npm = await E.modules.npm();
 
-if(E.flags['update'])
+if(E.args.includes('update'))
     await npm.reinstall();
+
+if(E.args.includes('kaspad')) {
+
+    let dest = path.join(go.SRC,'github.com/kaspanet/');
+    if((E.flags.reset || E.flags.clean) && fs.existsSync(dest))
+        await E.emptyDir(dest);
+
+	await git.clone(`https://github.com/kaspanet/kaspad`, dest);
+
+	let targets = [
+		'kaspad',
+		'kaspad/cmd/kaspaminer'
+	];
+
+	// if(E.flags['nodns']) {
+	// 	const params = path.join(dest,'kaspad/domain/dagconfig/params.go');
+	// 	let text = fs.readFileSync(params,'utf-8');
+	// 	text.replace('testnet-dnsseed.kas.pa:17100','testnet-dnsseed.kdx.app:17100');
+	// 	fs.writeFileSync(params,text,{encoding:'utf-8'});
+	// }
+
+	console.log('Building kaspa binaries...')
+	let folders = []
+	for(let target of targets) {
+		let folder = path.join(dest,target);
+		console.log('builing',folder);
+		await go.build(folder);
+		console.log('done',folder);
+		folders.push(folder);
+	}
+
+	folders.forEach((folder) => {
+		let file = path.basename(folder);
+		let dest = file;
+		file += E.PLATFORM_BINARY_EXTENSION;
+		dest += E.PLATFORM_BINARY_EXTENSION;
+
+		if(!fs.existsSync(path.join(folder,file))) {
+			console.log(`Unable to locate source file: ${path.join(folder,file)}`);
+			console.log(`...giving up`);
+			process.exit(1);
+		}
+		E.copy(path.join(folder,file),path.join(E.appFolder,'bin',dest));
+	})
+}
+
+if(E.args.includes('docker')) {
+	E.manifest_read();
+
+	const relay = ['no-cache'];
+	const args = ['-s','docker','build'].concat(relay.map(k=>E.flags[k]?`--${k}`:null)).filter(v=>v);
+	args.push('-t',`faucet:latest`,'.');
+	const ts0 = Date.now();
+	await E.utils.spawn('sudo', args, { cwd : __dirname, stdio: 'inherit' });
+	await E.utils.spawn('sudo',['docker','tag','faucet:latest',`faucet:${E.manifest.version}`], { cwd : __dirname, stdio: 'inherit' });
+	console.log('Docker build complete at',new Date());
+	const ts1 = Date.now();
+	console.log('Docker build took'.brightBlue,`${((ts1-ts0)/1000/60).toFixed(1)}`.brightWhite,'minutes'.brightBlue)
+}
