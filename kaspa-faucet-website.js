@@ -19,6 +19,7 @@ const {FlowHttp} = require('@aspectron/flow-http')({
 	Cookie,
 	CookieSignature,
 });
+const Decimal = require('decimal.js');
 const { Wallet, initKaspaFramework } = require('kaspa-wallet');
 const { RPC } = require('kaspa-grpc-node');
 const DAY = 1000*60*60*24;
@@ -151,14 +152,28 @@ class KaspaFaucet extends EventEmitter{
 		let requests = flowHttp.sockets.subscribe("faucet-request");
 		(async ()=>{
 			for await(const msg of requests) {
-				let ts = Date.now();
+				const ts = Date.now();
+				const period_start = ts-DAY;
 				const { data, ip } = msg;
 				console.log(`request[${ip}]: `, data);
-				const { address, network, amount, captcha } = data;
+				const { address, network, amount : amount_, captcha } = data;
+				// TODO check amount
+				const amount = Decimal(amount_);
+				const limit = Decimal(this.limits[network] || 0).mul(1e8);
+
+				if(!this.networks.includes(network)) {
+					msg.error(`Unknown network ${network}`);
+					continue;
+				}
+				const [ prefix ] = address.split(':');
+				if(prefix != network) {
+					msg.error(`Incompatible address ${address} for network ${network}`);
+					continue;
+				}
 
 				if(!this.wallets[network]) {
-					msg.error({ message : `Unable to send funds` });
-					return;
+					msg.error(`Wallet interface is not active for network ${network}`);
+					continue;
 				}
 
 
@@ -169,21 +184,18 @@ class KaspaFaucet extends EventEmitter{
 				}
 
 				if(!user[network])
-					user[network] = { ts };
-				let info = user[network];
+					user[network] = [];
 
-				if(ts - info.ts > DAY)
-					info.available = this.config.ksp_per_day_limit;
-				console.log({user});
-				if(info.available < amount) {
-
-					const msec_to_reset = (info.ts + DAY - Date.now());
-					console.log({msec_to_reset});
-					msg.error({ error : 'limit', message : `Unable to send funds`, network, ...info, msec_to_reset });
-				}
+				user[network] = user[network].filter(tx => tx.ts > period_start);
+				const transactions = user[network];
+				const spent = Decimal(0);
+				transactions.forEach(tx => spent.add(tx.amount));
+				const available = limit.sub(spent);
+				if(available.lt(amount)) {
+					msg.error(`Unable to send funds. ${available.mul(1e-8).toFixed(8)} KSP remains available.`);
+					continue;
+				}				
 				else {
-					// TODO - send transaction
-
 					try {
 						let response = await this.wallets[network].submitTransaction({
 							toAddr: address,
@@ -191,28 +203,16 @@ class KaspaFaucet extends EventEmitter{
 							fee: 400,
 						}, true);
 
-						msg.respond({ amount, address, network, response });
-						info.ts = ts;
-						info.available -= amount;
+						msg.respond({ amount, address, network, response, available });
+						transactions.push({ts,amount});
 
 					} catch(ex) {
 						console.log(ex);
 						msg.respond(ex);
 					}
-					// .catch(async (error)=>{
-					// 	console.log("\n\nerror", error)
-					// })
-
-					// =====================
 				}
 			}
 		})();
-
-		// setInterval(()=>{
-		// 	let balance = Math.random();
-		// 	console.log('posting balance update', balance);
-		// 	flowHttp.sockets.publish('balance', { balance })
-		// }, 1000);
 
 		for( const [network,wallet] of Object.entries(this.wallets)) {
 
