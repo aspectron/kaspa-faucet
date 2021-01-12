@@ -103,7 +103,18 @@ export class FaucetForm extends BaseElement {
 
 			this.setError(false);
 			console.log("SERVER RESPONSE:", result);
-			FlowDialog.alert("Success", `We have successfully sent ${Decimal(result.amount).mul(1e-8)} to ${address}.`);
+
+			/*
+			FlowDialog.show({
+				body: html`
+					<div>
+					We have successfully sent <b>${Decimal(result.amount).mul(1e-8)}</b> to <b>${address}</b>.
+					</div>
+                    <flow-btn slot="buttons" @click="${close}">Close</flow-btn>
+				`
+			});
+			*/
+			FlowDialog.alert(`Success`, html`We have successfully sent <b>${Decimal(result.amount).mul(1e-8)}</b> to <b>${address}</b>.`);
 		})
 	}
 

@@ -51,20 +51,17 @@ export class FaucetTransactions extends BaseElement {
 				for await(const msg of this.transactionUpdates[network]) {
 					const { added, removed, seq } = msg.data;
 					// console.log({seq});
-					removed.forEach(tx=>{
-						//tx.amount = -parseInt(tx.amount) * 1e-8;
-						transactions.unshift({
-							...tx,
-							amount : Decimal(tx.amount).mul(1e-8).neg() //-BigInt(tx.amount) / BigInt(1e-8)
-						}); 
-					});
+					// removed does not contain an amount...
+					// removed.forEach(tx=>{
+					// 	transactions.unshift({
+					// 		...tx,
+					// 		amount : Decimal(tx.amount).mul(1e-8).neg()
+					// 	}); 
+					// });
 					added.forEach(tx=>{
-						// tx.amount = parseInt(tx.amount) * 1e-8;
-						// this.transactions.unshift(tx);
 						transactions.unshift({
 							...tx,
-	//						amount : BigInt(tx.amount) / BigInt(1e-8)
-							amount : Decimal(tx.amount).mul(1e-8) //-BigInt(tx.amount) / BigInt(1e-8)
+							amount : Decimal(tx.amount).mul(1e-8)
 						}); 
 					});
 					// console.log(this.transactions);
