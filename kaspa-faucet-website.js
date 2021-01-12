@@ -128,7 +128,8 @@ class KaspaFaucet extends EventEmitter{
 		(async()=>{
 			for await(const event of socketConnections) {
 				//event.socket.write(JSON.stringify(['networks', addresses]));
-				event.socket.publish('networks', { networks : this.addresses });
+				event.socket.publish('networks', { networks : Object.keys(this.addresses) });
+				event.socket.publish('addresses', { addresses : this.addresses });
 				// Object.entries(this.addresses).forEach(([network,address]) => {
 				// 	event.socket.emit(`address-${network}`, { address })
 				// })

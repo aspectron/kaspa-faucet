@@ -4,8 +4,7 @@ export class FaucetInfo extends BaseElement {
 	static get properties(){
 		return {
             limit:{type:Number},
-            network:{type:String},
-            address:{type:String}
+            network:{type:String}
 		}
 	}
 	static get styles(){
@@ -19,30 +18,32 @@ export class FaucetInfo extends BaseElement {
     constructor() {
         super();
         this.limit = 1000;
-        this.address = '';
+        this.addresses = [];
+
     }
 
 
 	onlineCallback() {
 		const { rpc } = flow.app;
-		this.networkUpdates = rpc.subscribe(`networks`);
+		this.addressUpdates = rpc.subscribe(`addresses`);
 		(async()=>{
-			for await(const msg of this.networkUpdates) {
-                const { networks } = msg.data;
-                this.address = networks[this.network];
+			for await(const msg of this.addressUpdates) {
+                const { addresses } = msg.data;
+                this.addresses = addresses;
+                this.requestUpdate();
 				// this.networks = networks;
 				// console.log("available networks:",networks);
 			}
-		})().then(()=>{
-		});
+		})().then();
 	}
 
 	offlineCallback() {
-		this.networkUpdates.stop();
+		this.addressUpdates.stop();
 	}
 
 
 	render(){
+        const address = this.addresses[this.network];
         return html`
             <div class="info">
                 <div class="caption">Welcome to Kaspa Faucet</div>
@@ -50,13 +51,10 @@ export class FaucetInfo extends BaseElement {
                     <p>Kaspa Faucet sends Kaspa to anyone requesting.</p>
                     <p>It has a defined address, where Kaspa is mined into. 
                     If the faucet address has enough Kaspa, it will send to an address you provide. </p>
-                    <p>Faucet can receive funds at the following address: ${this.address}</p>
+                    <p>Faucet can receive funds at the following address:</p>
+                    <p><b>${address}</b></p>
                     <p>Requests are limited to the maximum of ${this.limit.toFixed()} KSP per IP address per 24 hours.</p>
                 </div>
-            </div>
-
-            <div class="info">
-                <flow-link></flow-link>
             </div>
 		`;
 	}

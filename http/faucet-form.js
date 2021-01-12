@@ -5,7 +5,8 @@ export class FaucetForm extends BaseElement {
 	static get properties(){
 		return {
 			errorMessage:{type:String},
-			network:{type:String}
+			network : {type:String},
+			networks:{type:Array}
 		}
 	}
 	static get styles(){
@@ -16,13 +17,15 @@ export class FaucetForm extends BaseElement {
 			flow-select{margin:8px 0px;}
 			.error{color:red;min-height:30px;padding:16px;box-sizing:border-box;font-family:"Open Sans";font-size:16px;}
 			.captcha{min-height:50px;margin-top:20px;}
-			.message{margin:30px 0px;font-family:"Open Sans";font-size:16px;font-weight:normal;text-align:center;}
+			.message{margin:30px 0px;font-family:"Open Sans";font-size:16px;font-weight:normal;}
 			
 		`
 	}
 	
 	constructor(){
 		super();
+		// this.network = 
+		this.networks = {};
 		//this.network = flow.app.network;
 	}
 
@@ -35,17 +38,15 @@ export class FaucetForm extends BaseElement {
 	
 
 	render(){
-		
+
+		const { aliases } = flow.app;
 		return html`
 			<div class="message">Enter your address and the amount of Kaspa you want to receive:</div>
-			<flow-input label="Address" class="address" value="kaspatest:qpuyhaxz2chn3lsvf8g7q5uvaezpp5m7pyny4k8tyq"></flow-input>
+			<flow-input label="Address (Must start with '${this.network}' prfix)" class="address" value="kaspatest:qpuyhaxz2chn3lsvf8g7q5uvaezpp5m7pyny4k8tyq"></flow-input>
 			<flow-input label="Amount" class="amount" value="12.99"></flow-input>
 			<flow-select label="Network" selected="${this.network}" class="network"
 				@select=${this.networkChange}>
-				<flow-menu-item value="kaspatest">TESTNET</flow-menu-item>
-				<flow-menu-item value="kaspa">MAINNET</flow-menu-item>
-				<flow-menu-item value="ksapadev">DEVNET</flow-menu-item>
-				<flow-menu-item value="kaspasim">SIMNET</flow-menu-item>
+				${this.networks.map(n => html`<flow-menu-item value="${n}">${aliases[n]}</flow-menu-item>`)}
 			</flow-select>
 			<div class="captcha">
 				<slot name="captcha"></slot>
@@ -81,6 +82,8 @@ export class FaucetForm extends BaseElement {
 		//if(!captcha)
 		//	return
 
+		amount = Decimal(amount).mul(1e8);
+
 		this.setError(false);
 
 		flow.app.rpc.request("faucet-request", {
@@ -100,7 +103,7 @@ export class FaucetForm extends BaseElement {
 
 			this.setError(false);
 			console.log("SERVER RESPONSE:", result);
-			FlowDialog.alert("Success", `We have successfully sent ${result.amount} to ${address}.`);
+			FlowDialog.alert("Success", `We have successfully sent ${Decimal(result.amount).mul(1e-8)} to ${address}.`);
 		})
 	}
 

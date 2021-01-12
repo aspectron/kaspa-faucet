@@ -1,10 +1,11 @@
 import {dpc, html, css, BaseElement} from '/flow/flow-ux/flow-ux.js';
+import {Decimal} from '/flow/flow-ux/extern/decimal.js';
 
 export class FaucetBalance extends BaseElement {
 	static get properties(){
 		return {
 			network : { type : String },
-            balance : { type : Number }
+            balances : { type : Object }
 		}
 	}
 	static get styles(){
@@ -21,31 +22,38 @@ export class FaucetBalance extends BaseElement {
 	
 	constructor(){
         super();
-		this.balance = 0;
+		this.balances = {};
+		this.balanceUpdates = {};
 		//this.network = flow.app.network;
 	}
 
 	onlineCallback() {
-		const { rpc } = flow.app;
-		this.balanceUpdates = rpc.subscribe(`balance-${this.network}`);
-		(async()=>{
-			for await(const msg of this.balanceUpdates) {
-                this.balance = msg.data.balance * 1e-8;
-			}
-		})().then();
+		const { rpc, networks } = flow.app;
+		networks.forEach((network)=>{
+			this.balanceUpdates[network] = rpc.subscribe(`balance-${network}`);
+			(async()=>{
+				for await(const msg of this.balanceUpdates[network]) {
+					this.balances[network] = Decimal(msg.data.balance).mul(1e-8);
+					if(this.network == network)
+						this.requestUpdate();
+				}
+			})().then();
+		})
 	}
 	
 	offlineCallback() {
-		this.balanceUpdates.stop();
+		Object.values(this.balanceUpdates).forEach(subscriber => subscriber.stop());
 	}
 	
 
 	render(){
 		
+		const balance = this.balances[this.network] ? flow.app.formatKSP(this.balances[this.network], true)+' KSP' : '---';
+
         return html`
             <div class='wrapper'>
                 <div class='caption'>Faucet Balance</div>
-                <div class='balance'>${flow.app.formatKSP(this.balance)} KSP</div>
+                <div class='balance'>${balance}</div>
             </div>
 		`;
 	}

@@ -6,23 +6,33 @@ export *  from './faucet-balance.js';
 export *  from './faucet-transactions.js';
 export *  from './kaspa-transaction.js';
 
-class App extends FlowApp {
+class KaspaFaucetApp extends FlowApp {
 
 
 	static get properties(){
 		return {
-			network:{type:String}
+			network:{type:String},
+			networks:{type:Array}
 		}
 	}
 	constructor(){
 		super();
 
+		this.networks = ['kaspa','kaspatest','kaspadev','kaspasim'];
 		this.network = "kaspatest";
 		// window.app = this;
 		//this.initSiteConfig(config)
 		this.opt = {
 
 		}
+
+
+		this.aliases = {
+			kaspa : 'MAINNET',
+			kaspatest : 'TESTNET',
+			kaspadev : 'DEVNET',
+			kaspasim : 'SIMNET'
+		}		
 
 		this.initLog();
 		dpc(async ()=>this.init());
@@ -138,8 +148,8 @@ class App extends FlowApp {
 		this.setMenu("home")
 	}
 
-	formatKSP(v) {
-		return FlowFormat.crypto(v, { noTrailingZeros : true });
+	formatKSP(v, noTrailingZeros) {
+		return FlowFormat.crypto(v, { noTrailingZeros });
 	}
 
 	onlineCallback() {
@@ -149,10 +159,10 @@ class App extends FlowApp {
 			for await(const msg of this.networkUpdates) {
 				const { networks } = msg.data;
 				this.networks = networks;
-				console.log("available networks:",networks);
+				console.log("available networks:", networks);
+				// this.requestUpdate();
 			}
-		})().then(()=>{
-		});
+		})().then();
 	}
 
 	offlineCallback() {
@@ -161,7 +171,8 @@ class App extends FlowApp {
 
 	
 	render(){
-		let network = this.network||'kaspatest';
+		let network = this.network;
+		let address = this.networks[this.network] || '';
 		return html`
 		<flow-app-layout no-drawer no-header>
 			<!--flow-app-drawer slot="drawer" class="left-area">
@@ -175,13 +186,12 @@ class App extends FlowApp {
 		<div slot="main" class="main-area flex sbar" col>
 			<div for="home" row class="content">
 				<div col class="balance-wrapper">
-					<h1>Network: ${network}</h1>
 					<faucet-balance network="${network}"></faucet-balance>
 					<faucet-transactions network="${network}"></faucet-transactions>
 				</div>
 				<div col class='form-wrapper'>
 					<faucet-info network="${network}"></faucet-info>
-					<faucet-form network="${network}" @network-change="${this.onNetworkChange}">
+					<faucet-form network="${network}" .networks="${this.networks}" @network-change="${this.onNetworkChange}">
 						<div slot="captcha" class="g-recaptcha" 
 							data-sitekey="6LeGJSoTAAAAAKtLbjbdiIQTFK9tYLqyRx0Td-MA"></div>
 					</faucet-form>
@@ -199,4 +209,4 @@ class App extends FlowApp {
 
 }
 
-App.define("kaspa-app");
+KaspaFaucetApp.define("kaspa-faucet-app");

@@ -14,7 +14,7 @@ export class KaspaTransaction extends BaseElement {
             .transaction { 
 				margin-top: 4px;
 			}
-			.transaction :nth-child(1) { width: 80px;  text-align:center; }
+			.transaction :nth-child(1) { width: 140px;  text-align:center; }
 			.transaction :nth-child(2) { width: 120px; text-align:center; }
 			.transaction :nth-child(3) { width: 300px; }
 			.xx-transaction div { border: 1px solid red; }
