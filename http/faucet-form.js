@@ -40,7 +40,8 @@ export class FaucetForm extends BaseElement {
 			<div class="message">Enter your address and the amount of Kaspa you want to receive:</div>
 			<flow-input label="Address" class="address" value="kaspatest:qpuyhaxz2chn3lsvf8g7q5uvaezpp5m7pyny4k8tyq"></flow-input>
 			<flow-input label="Amount" class="amount" value="12.99"></flow-input>
-			<flow-select label="Network" selected="${this.network}" class="network" @select=${this.networkChange}>
+			<flow-select label="Network" selected="${this.network}" class="network"
+				@select=${this.networkChange}>
 				<flow-menu-item value="kaspatest">TESTNET</flow-menu-item>
 				<flow-menu-item value="kaspa">MAINNET</flow-menu-item>
 				<flow-menu-item value="ksapadev">DEVNET</flow-menu-item>
@@ -60,10 +61,10 @@ export class FaucetForm extends BaseElement {
 	submit(){
 		let qS = this.renderRoot.querySelector.bind(this.renderRoot);
 		let address = qS(".address").value;
-		// let network = qS(".network").value;
+		let network = qS(".network").value;
 		let amount = qS(".amount").value;
 		let captcha = this.querySelector('.g-recaptcha .g-recaptcha-response')?.value;
-		let network = flow.app.network;
+		//let network = flow.app.network;
 		//kaspatest:qq0nvlmn07f6edcdfynt4nu4l4r58rkquuvgt635ac
 		console.log({ address, network, amount, captcha });
 
@@ -116,9 +117,9 @@ export class FaucetForm extends BaseElement {
 
 	}
 
-	networkChange({ detail : { network }}) {
-		flow.app.network = network;
-//		console.log(network);
+	networkChange({ detail : { selected:network }}) {
+		//flow.app.network = network;
+		this.fire("network-change", {network});
 	}
 }
 
