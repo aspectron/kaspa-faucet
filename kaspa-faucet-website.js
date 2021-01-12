@@ -96,6 +96,12 @@ class KaspaFaucet extends EventEmitter{
 		this.rpc = { }
 		this.wallets = { }
 		this.addresses = { }
+		this.limits = { }
+
+		const limits_ = {
+			kaspa : 1000,
+			kaspatest : 2500,
+		}
 
 		for (const {network,port} of Object.values(Wallet.networkTypes)) {
 			if(filter.length && !filter.includes(network)) {
@@ -112,7 +118,10 @@ class KaspaFaucet extends EventEmitter{
 
 			this.wallets[network] = Wallet.fromMnemonic("wasp involve attitude matter power weekend two income nephew super way focus", { network, rpc });
 			this.addresses[network] = this.wallets[network].receiveAddress;
+			this.limits[network] = limits_[network] || 1000;
 		}
+
+		this.networks = Object.keys(this.wallets);
 	}
 
 	async main() {
@@ -127,9 +136,11 @@ class KaspaFaucet extends EventEmitter{
 		let socketConnections = flowHttp.sockets.events.subscribe('connect');
 		(async()=>{
 			for await(const event of socketConnections) {
+				const { networks, addresses, limits } = this;
 				//event.socket.write(JSON.stringify(['networks', addresses]));
-				event.socket.publish('networks', { networks : Object.keys(this.addresses) });
-				event.socket.publish('addresses', { addresses : this.addresses });
+				event.socket.publish('networks', { networks });
+				event.socket.publish('addresses', { addresses });
+				event.socket.publish('limits', { limits });
 				// Object.entries(this.addresses).forEach(([network,address]) => {
 				// 	event.socket.emit(`address-${network}`, { address })
 				// })
@@ -224,7 +235,7 @@ class KaspaFaucet extends EventEmitter{
 				// added = added.values().flat();
 				// removed = removed.values().flat();
 				//console.log('info',added,removed)
-				flowHttp.sockets.publish(`balance-${network}`, { balance });
+				flowHttp.sockets.publish(`balance-${network}`, { available : balance, pending : 0 });
 				//flowHttp.sockets.publish('transactions', { added, removed });
 			})
 

@@ -85,7 +85,7 @@ export class FaucetTransactions extends BaseElement {
 	}
 
 	render(){
-		const transactions = this.transactions[this.network];
+		const transactions = this.transactions[this.network] || [];
         return html`
             <div class='wrapper'>
 				<div class='caption'>Faucet Transactions</div>

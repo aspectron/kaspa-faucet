@@ -33,7 +33,11 @@ export class FaucetBalance extends BaseElement {
 			this.balanceUpdates[network] = rpc.subscribe(`balance-${network}`);
 			(async()=>{
 				for await(const msg of this.balanceUpdates[network]) {
-					this.balances[network] = Decimal(msg.data.balance).mul(1e-8);
+					const { available, pending } = msg.data;
+					this.balances[network] = { 
+						available : Decimal(available).mul(1e-8), 
+						pending : Decimal(pending).mul(1e-8) 
+					};
 					if(this.network == network)
 						this.requestUpdate();
 				}
@@ -48,12 +52,12 @@ export class FaucetBalance extends BaseElement {
 
 	render(){
 		
-		const balance = this.balances[this.network] ? flow.app.formatKSP(this.balances[this.network], true)+' KSP' : '---';
+		const available = this.balances[this.network]?.available ? flow.app.formatKSP(this.balances[this.network].available, true)+' KSP' : '---';
 
         return html`
             <div class='wrapper'>
                 <div class='caption'>Faucet Balance</div>
-                <div class='balance'>${balance}</div>
+                <div class='balance'>${available}</div>
             </div>
 		`;
 	}
