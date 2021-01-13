@@ -33,6 +33,7 @@ export class FaucetBalance extends BaseElement {
 			this.balanceUpdates[network] = rpc.subscribe(`balance-${network}`);
 			(async()=>{
 				for await(const msg of this.balanceUpdates[network]) {
+					console.log("balanceUpdates: msg.data", network, msg.data)
 					const { available, pending } = msg.data;
 					this.balances[network] = { 
 						available : Decimal(available).mul(1e-8), 

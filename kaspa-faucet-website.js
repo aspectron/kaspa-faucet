@@ -137,16 +137,28 @@ class KaspaFaucet extends EventEmitter{
 		let socketConnections = flowHttp.sockets.events.subscribe('connect');
 		(async()=>{
 			for await(const event of socketConnections) {
+				//console.log("###################################### socket connect")
 				const { networks, addresses, limits } = this;
 				//event.socket.write(JSON.stringify(['networks', addresses]));
 				event.socket.publish('networks', { networks });
 				event.socket.publish('addresses', { addresses });
 				event.socket.publish('limits', { limits });
+				//setTimeout(()=>{
+					networks.forEach(network=>{
+						let wallet = this.wallets[network];
+						if(!wallet)
+							return
+						event.socket.publish(`balance-${network}`, {
+							available : wallet.balance,
+							pending : 0
+						});
+					})
+				//}, 5000)
 				// Object.entries(this.addresses).forEach(([network,address]) => {
 				// 	event.socket.emit(`address-${network}`, { address })
 				// })
 			}
-		})().then(()=>{ });
+		})();
 
 
 		let requests = flowHttp.sockets.subscribe("faucet-request");
@@ -248,6 +260,24 @@ class KaspaFaucet extends EventEmitter{
 				removed = [...removed.values()].flat();
 				flowHttp.sockets.publish(`utxo-change-${network}`, { added, removed, seq : seq++ });
 			})
+
+			/*
+			//utxoSync() debug....
+			wallet.addressManager.receiveAddress.next();
+			wallet.addressManager.receiveAddress.next();
+			wallet.addressManager.receiveAddress.next();
+			setTimeout(()=>{
+				wallet.addressManager.receiveAddress.next();
+				wallet.addressManager.receiveAddress.next();
+				wallet.addressManager.receiveAddress.next();
+			}, 1000)
+
+			/*
+			await wallet.addressDiscovery(20)
+		    .catch(e=>{
+		        console.log("addressDiscovery:error", e)
+		    })
+		    */
 		}
 	}
 }

@@ -45,8 +45,8 @@ body:not(.flow-theme-dark){--logo-dark-display:none;}
     background-color:rgba(200,200,200, 0.15);
     position:relative;
     width:100%;
-    height: 100%;
-    overflow-y:hidden;overflow-x:hidden;
+    height:100%;
+    /*overflow-y:hidden;*/overflow-x:hidden;
 }
 .flow-theme-dark .main-area {--flow-input-bg:#161927;}
 .flow-theme-light .menu li.active{--fa-icon-color:#FFF;color:#FFF}
