@@ -98,7 +98,10 @@ export class FaucetForm extends BaseElement {
 					this.setError(`Unable to send funds: you have ${flow.app.formatKSP(available)} remaining. Your limit will be reset in ${FlowFormat.duration(msec_to_reset)}.`);
 				}
 				else {
-					this.setError(err.toString());
+					let text = err.toString();
+					if(/ApiError/.test(text))
+						text = html`${text.split(/:/).map(v=>html`${v}<br/>`)}`;
+					this.setError(text);
 				}
 				return;
 			}
