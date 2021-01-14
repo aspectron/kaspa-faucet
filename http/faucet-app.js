@@ -163,6 +163,8 @@ class KaspaFaucetApp extends FlowApp {
 			for await(const msg of this.networkUpdates) {
 				const { networks } = msg.data;
 				this.networks = networks;
+				if(!this.networks.includes(this.network))
+					this.network = this.networks[0];
 				console.log("available networks:", networks);
 				this.requestUpdate();
 			}
