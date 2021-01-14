@@ -35,10 +35,14 @@ export class FaucetBalance extends BaseElement {
 				for await(const msg of this.balanceUpdates[network]) {
 					console.log("balanceUpdates: msg.data", network, msg.data)
 					const { available, pending } = msg.data;
-					this.balances[network] = { 
-						available : Decimal(available).mul(1e-8), 
-						pending : Decimal(pending).mul(1e-8) 
-					};
+					try {
+						this.balances[network] = { 
+							available : Decimal(available||0).mul(1e-8), 
+							pending : Decimal(pending||0).mul(1e-8) 
+						};
+					} catch(ex) {
+						console.log(ex);
+					}
 					if(this.network == network)
 						this.requestUpdate();
 				}

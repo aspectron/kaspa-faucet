@@ -12,7 +12,11 @@ class KaspaFaucetApp extends FlowApp {
 	static get properties(){
 		return {
 			network:{type:String},
-			networks:{type:Array}
+			networks:{type:Array},
+			address:{type:String},
+			addresses:{type:Array},
+			limit:{type:Number},
+			limits:{type:Array}
 		}
 	}
 	constructor(){
@@ -160,19 +164,40 @@ class KaspaFaucetApp extends FlowApp {
 				const { networks } = msg.data;
 				this.networks = networks;
 				console.log("available networks:", networks);
-				// this.requestUpdate();
+				this.requestUpdate();
+			}
+		})().then();
+
+		this.addressUpdates = rpc.subscribe(`addresses`);
+		(async()=>{
+			for await(const msg of this.addressUpdates) {
+                const { addresses } = msg.data;
+                this.addresses = addresses;
+                this.requestUpdate();
+				// this.networks = networks;
+				// console.log("available networks:",networks);
+			}
+		})().then();
+
+		this.limitUpdates = rpc.subscribe(`limits`);
+		(async()=>{
+			for await(const msg of this.limitUpdates) {
+                this.limits = msg.data.limits;
 			}
 		})().then();
 	}
 
 	offlineCallback() {
 		this.networkUpdates.stop();
+		this.addressUpdates.stop();
+		this.limitUpdates.stop();
 	}
 
 	
 	render(){
 		let network = this.network;
-		let address = this.networks[this.network] || '';
+		let address = this.addresses?.[this.network] || '';
+		let limit = this.limits?.[this.network] || '';
 		return html`
 		<flow-app-layout no-drawer no-header>
 			<!--flow-app-drawer slot="drawer" class="left-area">
@@ -190,8 +215,8 @@ class KaspaFaucetApp extends FlowApp {
 					<faucet-transactions network="${network}"></faucet-transactions>
 				</div>
 				<div col class='form-wrapper'>
-					<faucet-info network="${network}"></faucet-info>
-					<faucet-form network="${network}" .networks="${this.networks}" @network-change="${this.onNetworkChange}">
+					<faucet-info limit="${limit}" address="${address}"></faucet-info>
+					<faucet-form network="${network}" .networks="${this.networks}" address="${address}" @network-change="${this.onNetworkChange}">
 						<div slot="captcha" class="g-recaptcha" 
 							data-sitekey="6LeGJSoTAAAAAKtLbjbdiIQTFK9tYLqyRx0Td-MA"></div>
 					</faucet-form>

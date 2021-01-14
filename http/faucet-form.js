@@ -6,7 +6,8 @@ export class FaucetForm extends BaseElement {
 		return {
 			errorMessage:{type:String},
 			network : {type:String},
-			networks:{type:Array}
+			networks:{type:Array},
+			address:{type:String}
 		}
 	}
 	static get styles(){
@@ -24,8 +25,9 @@ export class FaucetForm extends BaseElement {
 	
 	constructor(){
 		super();
-		// this.network = 
+		this.networks = [];
 		this.networks = {};
+		this.address = '';
 		//this.network = flow.app.network;
 	}
 
@@ -42,7 +44,7 @@ export class FaucetForm extends BaseElement {
 		const { aliases } = flow.app;
 		return html`
 			<div class="message">Enter your address and the amount of Kaspa you want to receive:</div>
-			<flow-input label="Address (Must start with '${this.network}' prfix)" class="address" value="kaspatest:qpuyhaxz2chn3lsvf8g7q5uvaezpp5m7pyny4k8tyq"></flow-input>
+			<flow-input label="Address (Must start with '${this.network}' prfix)" class="address" value="${this.address}"></flow-input>
 			<flow-input label="Amount" class="amount" value="12.99"></flow-input>
 			<flow-select label="Network" selected="${this.network}" class="network"
 				@select=${this.networkChange}>

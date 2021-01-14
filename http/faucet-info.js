@@ -3,8 +3,8 @@ import {dpc, html, css, BaseElement, FlowFormat} from '/flow/flow-ux/flow-ux.js'
 export class FaucetInfo extends BaseElement {
 	static get properties(){
 		return {
-            limits:{type:Array},
-            network:{type:String}
+            limit:{type:Number},
+            address:{type:String}
 		}
 	}
 	static get styles(){
@@ -17,41 +17,43 @@ export class FaucetInfo extends BaseElement {
     
     constructor() {
         super();
-        this.limits = [];
-        this.addresses = [];
+        this.limit = 0;
+        this.address = '';
+        // this.limits = [];
+        // this.addresses = [];
 
     }
 
 
 	onlineCallback() {
-		const { rpc } = flow.app;
-		this.addressUpdates = rpc.subscribe(`addresses`);
-		(async()=>{
-			for await(const msg of this.addressUpdates) {
-                const { addresses } = msg.data;
-                this.addresses = addresses;
-                // this.requestUpdate();
-				// this.networks = networks;
-				// console.log("available networks:",networks);
-			}
-		})().then();
+		// const { rpc } = flow.app;
+		// this.addressUpdates = rpc.subscribe(`addresses`);
+		// (async()=>{
+		// 	for await(const msg of this.addressUpdates) {
+        //         const { addresses } = msg.data;
+        //         this.addresses = addresses;
+        //         // this.requestUpdate();
+		// 		// this.networks = networks;
+		// 		// console.log("available networks:",networks);
+		// 	}
+		// })().then();
 
-        this.limitUpdates = rpc.subscribe(`limits`);
-		(async()=>{
-			for await(const msg of this.limitUpdates) {
-                this.limits = msg.data.limits;
-			}
-		})().then();
+        // this.limitUpdates = rpc.subscribe(`limits`);
+		// (async()=>{
+		// 	for await(const msg of this.limitUpdates) {
+        //         this.limits = msg.data.limits;
+		// 	}
+		// })().then();
 	}
 
 	offlineCallback() {
-		this.addressUpdates.stop();
+		// this.limitUpdates.stop();
 	}
 
 
 	render(){
-        const address = this.addresses[this.network];
-        const limit = this.limits[this.network];
+        // const address = this.addresses[this.network];
+        // const limit = this.limits[this.network];
         return html`
             <div class="info">
                 <div class="caption">Welcome to Kaspa Faucet</div>
@@ -60,8 +62,8 @@ export class FaucetInfo extends BaseElement {
                     <p>It has a defined address, where you can send or mine Kaspa.
                     If the faucet address has enough Kaspa, it will send it to an address you provide. </p>
                     <p>Faucet can receive funds at the following address:</p>
-                    <p><b>${address}</b></p>
-                    <p>Requests are limited to the maximum of <b>${FlowFormat.commas(limit)}</b> KSP per IP address, per <b>24 hours</b>.</p>
+                    <p><b>${this.address}</b></p>
+                    <p>Requests are limited to the maximum of <b>${FlowFormat.commas(this.limit)}</b> KSP per IP address, per <b>24 hours</b>.</p>
                 </div>
             </div>
 		`;
