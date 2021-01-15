@@ -12,8 +12,9 @@ export class FaucetForm extends BaseElement {
 	}
 	static get styles(){
 		return css`
-			:host{display:block;
-				
+			:host{
+				display:block;
+				max-width:100%;
 			}
 			flow-select{margin:8px 0px;}
 			.error{color:red;min-height:30px;padding:16px;box-sizing:border-box;font-family:"Open Sans";font-size:16px;}
