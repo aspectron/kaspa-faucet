@@ -1,12 +1,11 @@
 {
-	"name": "kaspa-faucet-website",
+	"name": "kaspa-faucet",
 	"description": "kaspa-faucet",
 	"scripts": {
-		"start": "node kaspa-faucet-website"
+		"start": "node kaspa-faucet"
 	},
-	"main": "kaspa-faucet-website.js",
+	"main": "kaspa-faucet.js",
 	"dependencies": {
-		"@aspectron/flow-fastify-socket-io": "aspectron/flow-fastify-socket-io",
 		"@aspectron/flow-http": "*",
 		"@aspectron/flow-router": "aspectron/flow-router",
 		"@aspectron/flow-utils": "*",
@@ -27,7 +26,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/aspectron/kaspa-faucet-website"
+		"url": "git+https://github.com/aspectron/kaspa-faucet"
 	},
 	"license": "UNLICENSED",
 	"private": true
