@@ -33,7 +33,7 @@ class KaspaFaucet extends EventEmitter{
 			port:3001
 		}, opt)
 		this.appFolder = appFolder;
-		this.config = utils.getConfig(path.join(appFolder, "config", "kaspa-faucet-website"));
+		this.config = utils.getConfig(path.join(appFolder, "config", "kaspa-faucet"));
 		this.ip_limit_map = new Map();
 	}
 
@@ -240,14 +240,14 @@ class KaspaFaucet extends EventEmitter{
 			})
 
 			wallet.on("balance-update", (detail)=>{
-				console.log(`[${network}] wallet:balance-update`, wallet.balance, detail);
-				const { balance } = wallet;
+				const { balance, available, pending } = detail;
+				console.log(`[${network}] wallet:balance-update`, detail);
 
 				//let txlist = [];
 				// added = added.values().flat();
 				// removed = removed.values().flat();
 				//console.log('info',added,removed)
-				flowHttp.sockets.publish(`balance-${network}`, { available : balance, pending : 0 });
+				flowHttp.sockets.publish(`balance-${network}`, { available, pending });
 				//flowHttp.sockets.publish('transactions', { added, removed });
 			})
 
