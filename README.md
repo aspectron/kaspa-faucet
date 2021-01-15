@@ -2,11 +2,34 @@
 
 Miniature faucet website based on Kaspa Wallet library
 
+### Setup Kaspad
+
+    $ git clone git@github.com:kaspanet/kaspad
+    $ cd kaspad
+    $ go build
+    $ cd cmd/kaspaminer
+    $ go build
+
+### Run Kaspad Testnet
+Terminal 1: 
+
+    $ cd kaspad
+    $ kaspad --utxoindex --testnet
+
+
+Terminal 2: 
+
+    $ cd kaspad/cmd/kaspaminer
+    $ kaspaminer --miningaddr=kaspatest:qpuyhaxz2chn3lsvf8g7q5uvaezpp5m7pyny4k8tyq --mine-when-not-synced --testnet
+
+*IMPORTANT: Kaspad 8.4 master has broken testnet, you must replace `--testnet` with `--devnet` and the mining address to `kaspadev:qpuyhaxz2chn3lsvf8g7q5uvaezpp5m7pygf2jzn8d`.*
+*When changing configuration you may need to delete `home/kaspad` folder. On Windows `AppData/Local/Kaspad`.*
+
 
 ### Running
 
     $ git clone git@github.com:aspectron/kaspa-faucet
-    $ cs kaspa-faucet
+    $ cd kaspa-faucet
     $ npm install
     $ node kaspa-faucet
 
