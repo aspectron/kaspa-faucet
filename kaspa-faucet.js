@@ -235,13 +235,13 @@ class KaspaFaucet extends EventEmitter{
 
 			wallet.on("blue-score-changed", (result)=>{
 				let {blueScore} = result;
-				console.log(`[${network}] blue-score-changed: result, blueScore:`, result, blueScore)
+				//console.log(`[${network}] blue-score-changed: result, blueScore:`, result, blueScore)
 				flowHttp.sockets.publish(`blue-score-${network}`, { blueScore });
 			})
 
 			wallet.on("balance-update", (detail)=>{
 				const { balance, available, pending } = detail;
-				console.log(`[${network}] wallet:balance-update`, detail);
+				//console.log(`[${network}] wallet:balance-update`, detail);
 
 				//let txlist = [];
 				// added = added.values().flat();
@@ -253,7 +253,7 @@ class KaspaFaucet extends EventEmitter{
 
 			let seq = 0;
 			wallet.on("utxo-change", (detail)=>{
-				console.log(`[${network}] wallet:utxo-change`,'added:', detail.added.entries(), 'removed:', detail.removed.entries());
+				//console.log(`[${network}] wallet:utxo-change`,'added:', detail.added.entries(), 'removed:', detail.removed.entries());
 				let {added,removed} = detail;
 				//console.log("change",[...added.values()].flat(),removed);
 				added = [...added.values()].flat();
