@@ -12,6 +12,7 @@
 		"@aspectron/flow-ux": "aspectron/flow-ux",
 		"@webcomponents/webcomponentsjs": "*",
 		"colors": "*",
+		"commander": "^6.2.1",
 		"cookie": "*",
 		"cookie-signature": "*",
 		"decimal.js": "^10.2.1",

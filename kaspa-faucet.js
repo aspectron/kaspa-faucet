@@ -12,6 +12,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const Cookie = require("cookie");
 const CookieSignature = require("cookie-signature");
+const { Command, CommanderError } = require('commander');
 const {FlowHttp} = require('@aspectron/flow-http')({
 	express,
 	session,
@@ -27,25 +28,28 @@ const HOUR = 1000*60*60;
 const MIN = 1000*60;
 
 class KaspaFaucet extends EventEmitter{
-	constructor(appFolder, opt={}){
+	constructor(appFolder){
 		super();
-		this.opt = Object.assign({
-			port:3001
-		}, opt)
 		this.appFolder = appFolder;
 		this.config = utils.getConfig(path.join(appFolder, "config", "kaspa-faucet"));
 		this.ip_limit_map = new Map();
+
+		this.options = {
+			port : 3000
+		}
 	}
 
 	async initHttp(){
+
+		const { host, port } = this.options;
 
 		let flowHttp = new FlowHttp(__dirname, {
 			config:{
 				websocketMode:"RPC",
 				websocketPath:"/rpc",
 				http:{
-					host:"localhost",
-					port:3001,
+					host,
+					port,
 					session:{
 						secret:"34343546756767567657534578678672346573237436523798",
 						key:"kaspa-faucet-website"
@@ -57,7 +61,6 @@ class KaspaFaucet extends EventEmitter{
 			}
 		});
 		this.flowHttp = flowHttp;
-
 
 		flowHttp.on("app.init", args=>{
 			let {app} = args;
@@ -88,21 +91,19 @@ class KaspaFaucet extends EventEmitter{
 		await initKaspaFramework();
 
 		// support using --kaspa, --kaspatest --kaspadev --kaspasim from command line
-		let networkNames = Object.keys(Wallet.networkTypes);
-		const argv = process.argv.slice(2).map(v => v.replace(/^--/,''));
-		console.log('argv:',argv);
-		let filter = networkNames.filter(name => argv.includes(name));
-		console.log("networkNames",networkNames,'filter:',filter);
+
+		const aliases = Object.keys(Wallet.networkAliases);
+		let filter = aliases.map((alias) => { return this.options[alias] ? Wallet.networkAliases[alias] : null; }).filter(v=>v);
 
 		this.rpc = { }
 		this.wallets = { }
 		this.addresses = { }
 		this.limits = { }
 
-		const limits_ = {
-			kaspa : 1000,
-			kaspatest : 2500,
-		}
+		// const limits_ = {
+		// 	kaspa : 1000,
+		// 	kaspatest : 2500,
+		// }
 
 		for (const {network,port} of Object.values(Wallet.networkTypes)) {
 			if(filter.length && !filter.includes(network)) {
@@ -119,16 +120,13 @@ class KaspaFaucet extends EventEmitter{
 
 			this.wallets[network] = Wallet.fromMnemonic("wasp involve attitude matter power weekend two income nephew super way focus", { network, rpc });
 			this.addresses[network] = this.wallets[network].receiveAddress;
-			this.limits[network] = limits_[network] || 1000;
+			this.limits[network] = this.options.limit === false ? 0 : 1000; // || limits_[network] || 1000;
 		}
 
 		this.networks = Object.keys(this.wallets);
 	}
 
-	async main() {
-		//await this.initNATS();
-		await this.initHttp();
-		await this.initKaspa();
+	async initFaucet() {
 
 		const { flowHttp } = this;
 
@@ -171,7 +169,7 @@ class KaspaFaucet extends EventEmitter{
 				const { address, network, amount : amount_, captcha } = data;
 				// TODO check amount
 				const amount = Decimal(amount_);
-				const limit = Decimal(this.limits[network] || 0).mul(1e8);
+				const limit = this.limits[network] === false ? Decimal(1e8).mul(1e8) : Decimal(this.limits[network] || 0).mul(1e8);
 
 				if(!this.networks.includes(network)) {
 					msg.error(`Unknown network ${network}`);
@@ -206,7 +204,7 @@ class KaspaFaucet extends EventEmitter{
 				if(available.lt(amount)) {
 					msg.error(`Unable to send funds. ${available.mul(1e-8).toFixed(8)} KSP remains available.`);
 					continue;
-				}				
+				}
 				else {
 					try {
 						let response = await this.wallets[network].submitTransaction({
@@ -280,9 +278,65 @@ class KaspaFaucet extends EventEmitter{
 		    */
 		}
 	}
+
+	async main() {
+
+		const program = this.program = new Command();
+		program
+			.version('0.0.1', '--version')
+			.description('Kaspa Wallet client')
+			.helpOption('--help','display help for command')
+			.option('--log <level>','set log level [info, debug]', (level)=>{
+				const levels = ['info','debug'];
+				if(!levels.includes(level))
+					throw new Error(`Log level must be one of: ${levels.join(', ')}`);
+				return level;
+			}) // TODO - propagate to Wallet.ts etc.
+			.option('--testnet','use testnet network')
+			.option('--devnet','use devnet network')
+			.option('--simnet','use simnet network')
+			.option('--host <host>','http host (default: localhost)', 'localhost')
+			.option('--port <port>',`set http port (default ${this.options.port})`, (port)=>{
+				port = parseInt(port);
+				if(isNaN(port))
+					throw new Error('Port is not a number');
+				if(port < 0 || port > 0xffff)
+					throw new Error('Port number is out of range');
+				return port;
+			})
+			.option('--limit <limit>',`KSP/day limit per IP`, (limit)=>{
+				limit = parseFloat(limit);
+				if(isNaN(limit) || limit <= 0)
+					throw new Error('KSP/day limit is invalid');
+				return limit;
+			})
+			.option('--no-limit','disable KSP/day limit')
+			;
+
+		program.command('run', { isDefault : true })
+			.description('run faucet')
+			.action(async ()=>{
+
+				let options = program.opts();
+				Object.entries(options).forEach(([k,v])=>{ if(v === undefined) delete options[k]; })
+				Object.assign(this.options, options);
+				// console.log(this.options);
+				// return;
+
+				await this.initHttp();
+				await this.initKaspa();
+				await this.initFaucet();
+			})
+
+		program.parse();
+	}
 }
 
 (async () => {
 	let kaspaFaucet = new KaspaFaucet(__dirname);
-	kaspaFaucet.main();
+	try {
+		await kaspaFaucet.main();
+	} catch(ex) {
+		console.log(ex.toString());
+	}
 })();
