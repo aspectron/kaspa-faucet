@@ -121,6 +121,9 @@ class KaspaFaucet extends EventEmitter{
 			this.wallets[network] = Wallet.fromMnemonic("wasp involve attitude matter power weekend two income nephew super way focus", { network, rpc });
 			this.addresses[network] = this.wallets[network].receiveAddress;
 			this.limits[network] = this.options.limit === false ? 0 : 1000; // || limits_[network] || 1000;
+
+			if(this.options.log)
+				this.wallets[network].setLogLevel(this.options.log);
 		}
 
 		this.networks = Object.keys(this.wallets);
