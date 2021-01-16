@@ -119,6 +119,7 @@ class KaspaFaucet extends EventEmitter{
 			console.log(`Creating wallet for network '${network}' on port '${port}'`);
 
 			this.wallets[network] = Wallet.fromMnemonic("wasp involve attitude matter power weekend two income nephew super way focus", { network, rpc });
+//			this.wallets[network] = Wallet.fromMnemonic("live excuse stone acquire remain later core enjoy visual advice body play", { network, rpc });
 			this.addresses[network] = this.wallets[network].receiveAddress;
 			this.limits[network] = this.options.limit === false ? 0 : 1000; // || limits_[network] || 1000;
 
@@ -169,10 +170,9 @@ class KaspaFaucet extends EventEmitter{
 				const period_start = ts-DAY;
 				const { data, ip } = msg;
 				console.log(`request[${ip}]: `, data);
-				const { address, network, amount : amount_, captcha } = data;
+				const { address, network, amount, captcha } = data;
 				// TODO check amount
-				const amount = Decimal(amount_);
-				const limit = this.limits[network] === false ? Decimal(1e8).mul(1e8) : Decimal(this.limits[network] || 0).mul(1e8);
+				const limit = this.limits[network] === false ? Number.MAX_SAFE_INTEGER : (this.limits[network] || 0);
 
 				if(!this.networks.includes(network)) {
 					msg.error(`Unknown network ${network}`);
@@ -201,11 +201,10 @@ class KaspaFaucet extends EventEmitter{
 
 				user[network] = user[network].filter(tx => tx.ts > period_start);
 				const transactions = user[network];
-				const spent = Decimal(0);
-				transactions.forEach(tx => spent.add(tx.amount));
+				const spent = transactions.reduce((tx,v) => tx.amount+v, 0)
 				const available = limit.sub(spent);
-				if(available.lt(amount)) {
-					msg.error(`Unable to send funds. ${available.mul(1e-8).toFixed(8)} KSP remains available.`);
+				if(available < amount) {
+					msg.error(`Unable to send funds. ${Decimal(available).mul(1e-8).toFixed(8)} KSP remains available.`);
 					continue;
 				}
 				else {
