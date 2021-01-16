@@ -148,10 +148,7 @@ class KaspaFaucet extends EventEmitter{
 						let wallet = this.wallets[network];
 						if(!wallet)
 							return
-						event.socket.publish(`balance-${network}`, {
-							available : wallet.balance,
-							pending : 0
-						});
+						event.socket.publish(`balance-${network}`, wallet.balance);
 					})
 				//}, 5000)
 				// Object.entries(this.addresses).forEach(([network,address]) => {
@@ -213,7 +210,7 @@ class KaspaFaucet extends EventEmitter{
 							toAddr: address,
 							amount: amount,
 							fee: 400,
-						}, true);
+						});
 
 						msg.respond({ amount, address, network, response, available });
 						transactions.push({ts,amount});
