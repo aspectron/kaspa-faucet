@@ -228,7 +228,7 @@ class KaspaFaucet extends EventEmitter{
 
 		for( const [network,wallet] of Object.entries(this.wallets)) {
 
-			wallet.syncVirtualSelectedParentBlueScore()
+			wallet.sync()
 			.catch(e=>{
 				console.log(`[${network}] syncVirtualSelectedParentBlueScore Error`, e)
 			})
