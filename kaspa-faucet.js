@@ -21,7 +21,7 @@ const {FlowHttp} = require('@aspectron/flow-http')({
 	CookieSignature,
 });
 const Decimal = require('decimal.js');
-const { Wallet, initKaspaFramework } = require('kaspa-wallet');
+const { Wallet, initKaspaFramework, log } = require('kaspa-wallet');
 const { RPC } = require('kaspa-grpc-node');
 const DAY = 1000*60*60*24;
 const HOUR = 1000*60*60;
@@ -107,24 +107,22 @@ class KaspaFaucet extends EventEmitter{
 
 		for (const {network,port} of Object.values(Wallet.networkTypes)) {
 			if(filter.length && !filter.includes(network)) {
-				console.log(`Skipping creation of '${network}'...`);
+				log.verbose(`Skipping creation of '${network}'...`);
 				continue;
 			}
-			console.log(`Creating rpc for network '${network}' on port '${port}'`);
+			// log.info(`Creating rpc for network '${network}' on port '${port}'`);
 			const rpc = this.rpc[network] = new RPC({
 				clientConfig:{
 					host:"127.0.0.1:"+port
 				}
 			});
-			console.log(`Creating wallet for network '${network}' on port '${port}'`);
+			log.info(`Creating wallet for network '${network}' on port '${port}'`);
 
 			this.wallets[network] = Wallet.fromMnemonic("wasp involve attitude matter power weekend two income nephew super way focus", { network, rpc });
 //			this.wallets[network] = Wallet.fromMnemonic("live excuse stone acquire remain later core enjoy visual advice body play", { network, rpc });
 			this.addresses[network] = this.wallets[network].receiveAddress;
 			this.limits[network] = this.options.limit === false ? 0 : 1000; // || limits_[network] || 1000;
-
-			if(this.options.log)
-				this.wallets[network].setLogLevel(this.options.log);
+			this.wallets[network].setLogLevel(log.level);
 		}
 
 		this.networks = Object.keys(this.wallets);
@@ -169,7 +167,7 @@ class KaspaFaucet extends EventEmitter{
 				const ts = Date.now();
 				const period_start = ts-DAY;
 				const { data, ip } = msg;
-				console.log(`request[${ip}]: `, data);
+				log.verbose(`request[${ip}]: `, data);
 				const { address, network, amount, captcha } = data;
 				// TODO check amount
 				const limit = this.limits[network] === false ? Number.MAX_SAFE_INTEGER : (this.limits[network] || 0);
@@ -201,14 +199,16 @@ class KaspaFaucet extends EventEmitter{
 
 				user[network] = user[network].filter(tx => tx.ts > period_start);
 				const transactions = user[network];
-				const spent = transactions.reduce((tx,v) => tx.amount+v, 0)
-				const available = limit.sub(spent);
-				if(available < amount) {
-					msg.error(`Unable to send funds. ${Decimal(available).mul(1e-8).toFixed(8)} KSP remains available.`);
+				const spent = transactions.reduce((tx,v) => tx.amount+v, 0);
+				//const available = limit - spent;
+				const available = Decimal(limit).mul(1e8).sub(spent);
+				if(available.lt(amount)) {
+					msg.error(`Unable to send funds. ${Decimal(available).mul(1e-8).toFixed(8)} KSP remains available, ${amount} is needed.`);
 					continue;
 				}
 				else {
 					try {
+						log.info(`Sending ${amount} to ${address}`);
 						let response = await this.wallets[network].submitTransaction({
 							toAddr: address,
 							amount: amount,
@@ -282,18 +282,19 @@ class KaspaFaucet extends EventEmitter{
 	}
 
 	async main() {
-
+		const logLevels = ['error','warn','info','verbose','debug'];
 		const program = this.program = new Command();
 		program
 			.version('0.0.1', '--version')
 			.description('Kaspa Wallet client')
 			.helpOption('--help','display help for command')
-			.option('--log <level>','set log level [info, debug]', (level)=>{
-				const levels = ['info','debug'];
-				if(!levels.includes(level))
-					throw new Error(`Log level must be one of: ${levels.join(', ')}`);
+			.option('--log <level>',`set log level ${logLevels.join(', ')}`, (level)=>{
+				if(!logLevels.includes(level))
+					throw new Error(`Log level must be one of: ${logLevels.join(', ')}`);
 				return level;
 			}) // TODO - propagate to Wallet.ts etc.
+			.option('--verbose','log wallet activity')
+			.option('--debug','debug wallet activity')
 			.option('--testnet','use testnet network')
 			.option('--devnet','use devnet network')
 			.option('--simnet','use simnet network')
@@ -325,12 +326,16 @@ class KaspaFaucet extends EventEmitter{
 				// console.log(this.options);
 				// return;
 
+				log.level = (this.options.verbose&&'verbose')||(this.options.debug&&'debug')||(this.options.log)||'info';
+
 				await this.initHttp();
 				await this.initKaspa();
 				await this.initFaucet();
 			})
 
 		program.parse();
+
+
 	}
 }
 
