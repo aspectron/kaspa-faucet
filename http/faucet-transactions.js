@@ -50,7 +50,7 @@ export class FaucetTransactions extends BaseElement {
 			(async()=>{
 				for await(const msg of this.transactionUpdates[network]) {
 					const { added, removed, seq } = msg.data;
-					// console.log({seq});
+					console.log({seq});
 					// removed does not contain an amount...
 					// removed.forEach(tx=>{
 					// 	transactions.unshift({
