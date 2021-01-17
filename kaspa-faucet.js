@@ -201,7 +201,7 @@ class KaspaFaucet extends EventEmitter{
 
 				user[network] = user[network].filter(tx => tx.ts > period_start);
 				const transactions = user[network];
-				const spent = transactions.reduce((tx,v) => tx.amount+v, 0);
+				const spent = transactions.reduce((v, tx) => tx.amount+v, 0);
 				//const available = limit - spent;
 				console.log("limit:"+limit, "spent:"+spent)
 				const available = Decimal(limit).mul(1e8).sub(spent);
