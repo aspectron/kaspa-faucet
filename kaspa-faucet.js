@@ -118,8 +118,12 @@ class KaspaFaucet extends EventEmitter{
 			});
 			log.info(`Creating wallet for network '${network}' on port '${port}'`);
 
-			this.wallets[network] = Wallet.fromMnemonic("wasp involve attitude matter power weekend two income nephew super way focus", { network, rpc });
-//			this.wallets[network] = Wallet.fromMnemonic("live excuse stone acquire remain later core enjoy visual advice body play", { network, rpc });
+			this.wallets[network] = Wallet.fromMnemonic(
+				"wasp involve attitude matter power weekend two income nephew super way focus",
+				{ network, rpc },
+				{disableAddressDerivation:true}
+			);
+			//this.wallets[network] = Wallet.fromMnemonic("live excuse stone acquire remain later core enjoy visual advice body play", { network, rpc });
 			this.addresses[network] = this.wallets[network].receiveAddress;
 			this.limits[network] = this.options.limit === false ? 0 : 1000; // || limits_[network] || 1000;
 			this.wallets[network].setLogLevel(log.level);
@@ -143,17 +147,12 @@ class KaspaFaucet extends EventEmitter{
 				event.socket.publish('networks', { networks });
 				event.socket.publish('addresses', { addresses });
 				event.socket.publish('limits', { limits });
-				//setTimeout(()=>{
-					networks.forEach(network=>{
-						let wallet = this.wallets[network];
-						if(!wallet)
-							return
-						event.socket.publish(`balance-${network}`, wallet.balance);
-					})
-				//}, 5000)
-				// Object.entries(this.addresses).forEach(([network,address]) => {
-				// 	event.socket.emit(`address-${network}`, { address })
-				// })
+				networks.forEach(network=>{
+					let wallet = this.wallets[network];
+					if(!wallet)
+						return
+					event.socket.publish(`balance-${network}`, wallet.balance);
+				})
 			}
 		})();
 
