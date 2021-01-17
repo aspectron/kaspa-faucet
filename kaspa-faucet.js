@@ -118,8 +118,18 @@ class KaspaFaucet extends EventEmitter{
 			});
 			log.info(`Creating wallet for network '${network}' on port '${port}'`);
 
-			this.wallets[network] = Wallet.fromMnemonic("wasp involve attitude matter power weekend two income nephew super way focus", { network, rpc });
-//			this.wallets[network] = Wallet.fromMnemonic("live excuse stone acquire remain later core enjoy visual advice body play", { network, rpc });
+			/*
+			this.wallets[network] = Wallet.fromMnemonic(
+				"wasp involve attitude matter power weekend two income nephew super way focus",
+				{ network, rpc },
+				{disableAddressDerivation:true}
+			);
+			*/
+			this.wallets[network] = Wallet.fromMnemonic(
+				"live excuse stone acquire remain later core enjoy visual advice body play",
+				{ network, rpc },
+				{disableAddressDerivation:true}
+			);
 			this.addresses[network] = this.wallets[network].receiveAddress;
 			this.limits[network] = this.options.limit === false ? 0 : 1000; // || limits_[network] || 1000;
 			this.wallets[network].setLogLevel(log.level);
@@ -143,17 +153,12 @@ class KaspaFaucet extends EventEmitter{
 				event.socket.publish('networks', { networks });
 				event.socket.publish('addresses', { addresses });
 				event.socket.publish('limits', { limits });
-				//setTimeout(()=>{
-					networks.forEach(network=>{
-						let wallet = this.wallets[network];
-						if(!wallet)
-							return
-						event.socket.publish(`balance-${network}`, wallet.balance);
-					})
-				//}, 5000)
-				// Object.entries(this.addresses).forEach(([network,address]) => {
-				// 	event.socket.emit(`address-${network}`, { address })
-				// })
+				networks.forEach(network=>{
+					let wallet = this.wallets[network];
+					if(!wallet)
+						return
+					event.socket.publish(`balance-${network}`, wallet.balance);
+				})
 			}
 		})();
 
@@ -198,6 +203,7 @@ class KaspaFaucet extends EventEmitter{
 				const transactions = user[network];
 				const spent = transactions.reduce((tx,v) => tx.amount+v, 0);
 				//const available = limit - spent;
+				console.log("limit:"+limit, "spent:"+spent)
 				const available = Decimal(limit).mul(1e8).sub(spent);
 				if(available.lt(amount)) {
 					msg.error(`Unable to send funds. ${Decimal(available).mul(1e-8).toFixed(8)} KSP remains available, ${amount} is needed.`);
@@ -210,6 +216,7 @@ class KaspaFaucet extends EventEmitter{
 							toAddr: address,
 							amount: amount,
 							fee: 400,
+							changeAddrOverride: this.addresses[network]
 						});
 
 						msg.respond({ amount, address, network, response, available });

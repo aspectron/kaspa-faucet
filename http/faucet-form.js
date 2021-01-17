@@ -63,6 +63,7 @@ export class FaucetForm extends BaseElement {
 
 
 	submit(){
+		/*
 		FlowDialog.show({
 			title:"Test Dialog",
 			body: html`
@@ -75,6 +76,7 @@ export class FaucetForm extends BaseElement {
 			btns:['Close:primary:close'],//, {text:"Ok", cls:"success", value:"ok-btn"}]
 //			btns:['Close:danger:close', {text:"Ok", cls:"success", value:"ok-btn"}]
 		});
+		*/
 
   		let qS = this.renderRoot.querySelector.bind(this.renderRoot);
 		let address = qS(".address").value;
