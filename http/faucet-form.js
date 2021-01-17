@@ -69,15 +69,16 @@ export class FaucetForm extends BaseElement {
 			body: html`
 				<div class="msg">
 					We have successfully sent
-					<b>${Decimal(234).mul(1e-8)}</b> to <b class="address">xxxxxx</b>.
+					<b class="address">${Decimal(234).mul(1e-8)}</b> to <b class="amount">xxxxxx</b>.
 				</div>
 			`,
 			cls:"custom",
-			btns:['Close:danger:close', {text:"Ok", cls:"success", value:"ok-btn"}]
+			btns:['Close:primary:close'],//, {text:"Ok", cls:"success", value:"ok-btn"}]
+//			btns:['Close:danger:close', {text:"Ok", cls:"success", value:"ok-btn"}]
 		});
 		*/
 
-		let qS = this.renderRoot.querySelector.bind(this.renderRoot);
+  		let qS = this.renderRoot.querySelector.bind(this.renderRoot);
 		let address = qS(".address").value;
 		let network = qS(".network").value;
 		let amount = qS(".amount").value;

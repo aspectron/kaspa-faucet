@@ -118,18 +118,19 @@ class KaspaFaucet extends EventEmitter{
 			});
 			log.info(`Creating wallet for network '${network}' on port '${port}'`);
 
-			/*
-			this.wallets[network] = Wallet.fromMnemonic(
-				"wasp involve attitude matter power weekend two income nephew super way focus",
-				{ network, rpc },
-				{disableAddressDerivation:true}
-			);
-			*/
-			this.wallets[network] = Wallet.fromMnemonic(
-				"live excuse stone acquire remain later core enjoy visual advice body play",
-				{ network, rpc },
-				{disableAddressDerivation:true}
-			);
+			if(1) {
+				this.wallets[network] = Wallet.fromMnemonic(
+					"wasp involve attitude matter power weekend two income nephew super way focus",
+					{ network, rpc },
+					{disableAddressDerivation:true}
+				);
+			} else {
+				this.wallets[network] = Wallet.fromMnemonic(
+					"live excuse stone acquire remain later core enjoy visual advice body play",
+					{ network, rpc },
+					{disableAddressDerivation:true}
+				);
+			}
 			this.addresses[network] = this.wallets[network].receiveAddress;
 			this.limits[network] = this.options.limit === false ? 0 : 1000; // || limits_[network] || 1000;
 			this.wallets[network].setLogLevel(log.level);

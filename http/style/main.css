@@ -249,10 +249,18 @@ body.flow-theme-light{
 
 flow-dialog.custom {
     font-family:"Open Sans";
-    font-size:14px;
+    font-size:16px;
 }
-flow-dialog.custom .address{
+flow-dialog.custom .address,
+flow-dialog.custom .amount {
     font-family:"Consolas";
+    font-size:16px;
+}
+
+flow-dialog {
+    --flow-btn-hover-border-color:  var(--flow-primary-color);
+	--flow-btn-hover-primary-bg-color:white;
+	--flow-btn-hover-primary-color: var(--flow-primary-color);
 }
 
   /*
