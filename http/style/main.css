@@ -242,12 +242,18 @@ body.flow-theme-light{
     /*z-index: -1;*/
     background: url(/images/logo/logo-bright.png);
     background-repeat: no-repeat;
-/*border: 1px solid red;*/
-background-position: top center;
-
+    /*border: 1px solid red;*/
+    background-position: top center;
     max-width: 50%;
+}
 
-  }
+flow-dialog.custom {
+    font-family:"Open Sans";
+    font-size:14px;
+}
+flow-dialog.custom .address{
+    font-family:"Consolas";
+}
 
   /*
 .balance-wrapper {

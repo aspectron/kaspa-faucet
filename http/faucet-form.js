@@ -63,6 +63,18 @@ export class FaucetForm extends BaseElement {
 
 
 	submit(){
+		FlowDialog.show({
+			title:"Test Dialog",
+			body: html`
+				<div class="msg">
+					We have successfully sent
+					<b>${Decimal(234).mul(1e-8)}</b> to <b class="address">xxxxxx</b>.
+				</div>
+			`,
+			cls:"custom",
+			btns:['Close:danger:close', {text:"Ok", cls:"success", value:"ok-btn"}]
+		});
+
 		let qS = this.renderRoot.querySelector.bind(this.renderRoot);
 		let address = qS(".address").value;
 		let network = qS(".network").value;
