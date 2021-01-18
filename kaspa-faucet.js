@@ -105,19 +105,23 @@ class KaspaFaucet extends EventEmitter{
 		// 	kaspatest : 2500,
 		// }
 
+		if(this.options.rpc && filter.length != 1) {
+			log.error('You must explicitly use the network flag when specifying the RPC option');
+			log.error('Option required: --mainnet, --testnet, --devnet, --simnet')
+			process.exit(1);
+		}
+
 		for (const {network,port} of Object.values(Wallet.networkTypes)) {
 			if(filter.length && !filter.includes(network)) {
 				log.verbose(`Skipping creation of '${network}'...`);
 				continue;
 			}
-			// log.info(`Creating rpc for network '${network}' on port '${port}'`);
-			const rpc = this.rpc[network] = new RPC({
-				clientConfig:{
-					host:"127.0.0.1:"+port
-				}
-			});
-			log.info(`Creating wallet for network '${network}' on port '${port}'`);
 
+
+			const host = this.options.rpc || `127.0.0.1:${port}`;
+			log.info(`Creating gRPC binding for network '${network}' at ${host}`);
+			const rpc = this.rpc[network] = new RPC({ clientConfig:{ host } });
+			rpc.onError((error)=>{ log.error(`gRPC[${host}] ${error}`); })
 			if(1) {
 				this.wallets[network] = Wallet.fromMnemonic(
 					"wasp involve attitude matter power weekend two income nephew super way focus",
@@ -336,6 +340,7 @@ class KaspaFaucet extends EventEmitter{
 				return limit;
 			})
 			.option('--no-limit','disable KSP/day limit')
+            .option('--rpc <address>','use custom RPC address <host:port>')
 			;
 
 		program.command('run', { isDefault : true })
