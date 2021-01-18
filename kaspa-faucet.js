@@ -134,6 +134,8 @@ class KaspaFaucet extends EventEmitter{
 			this.addresses[network] = this.wallets[network].receiveAddress;
 			this.limits[network] = this.options.limit === false ? 0 : 1000; // || limits_[network] || 1000;
 			this.wallets[network].setLogLevel(log.level);
+
+			log.info(`${Wallet.networkTypes[network].name} address - ${this.addresses[network]}`);
 		}
 
 		this.networks = Object.keys(this.wallets);
