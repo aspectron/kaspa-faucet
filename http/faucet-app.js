@@ -212,10 +212,12 @@ class KaspaFaucetApp extends FlowApp {
 		</flow-app-drawer-->
 		<div slot="main" class="main-area flex sbar" col>
 			<div for="home" row class="content">
+				<div flex></div>
 				<div col class="balance-wrapper">
 					<faucet-balance network="${network}"></faucet-balance>
 					<faucet-transactions network="${network}"></faucet-transactions>
 				</div>
+				<div flex></div>
 				<div col class='form-wrapper'>
 					<faucet-info limit="${limit}" address="${address}"></faucet-info>
 					<faucet-form network="${network}" .networks="${this.networks}" address="${address}" @network-change="${this.onNetworkChange}">
@@ -223,6 +225,7 @@ class KaspaFaucetApp extends FlowApp {
 							data-sitekey="6LeGJSoTAAAAAKtLbjbdiIQTFK9tYLqyRx0Td-MA"></div>
 					</faucet-form>
 				</div>
+				<div flex></div>
 			</div>
 		</div>
 		</flow-app-layout>

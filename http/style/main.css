@@ -203,13 +203,13 @@ body.flow-theme-light{
 .balance-wrapper {
     padding-top: 64px;
     width: 40%;
-    margin-left: 10%;
+    margin-left: 32px;
 }
 
 .form-wrapper {
     padding-top: 64px;
     width: 40%;
-    margin-right: 10%;
+    margin-right: 32px;
     max-width: 600px;
     align-items: flex-start;
 }
@@ -273,3 +273,10 @@ flow-dialog {
   }
 
   */
+
+  .balance-wrapper, .form-wrapper {
+      min-width: 500px;
+/*      border: 1px solid red;*/
+  }
+
+  [flex] { flex:1; }
