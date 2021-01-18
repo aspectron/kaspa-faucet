@@ -217,7 +217,7 @@ class KaspaFaucet extends EventEmitter{
 							toAddr: address,
 							amount: amount,
 							fee: 400,
-							changeAddrOverride: this.addresses[network]
+							// changeAddrOverride: this.addresses[network]
 						});
 
 						msg.respond({ amount, address, network, response, available });
@@ -237,6 +237,16 @@ class KaspaFaucet extends EventEmitter{
 			.catch(e=>{
 				console.log(`[${network}] syncVirtualSelectedParentBlueScore Error`, e)
 			})
+
+			wallet.on("api-online", (result)=>{
+				log.info(`${network} - gRPC API is online`);
+				flowHttp.sockets.publish(`${network}-api-online`);
+			});
+
+			wallet.on("api-offline", (result)=>{
+				log.info(`${network} - gRPC API is offline`);
+				flowHttp.sockets.publish(`${network}-api-online`);
+			});
 
 			wallet.on("blue-score-changed", (result)=>{
 				let {blueScore} = result;
@@ -297,7 +307,7 @@ class KaspaFaucet extends EventEmitter{
 				if(!logLevels.includes(level))
 					throw new Error(`Log level must be one of: ${logLevels.join(', ')}`);
 				return level;
-			}) // TODO - propagate to Wallet.ts etc.
+			})
 			.option('--verbose','log wallet activity')
 			.option('--debug','debug wallet activity')
 			.option('--testnet','use testnet network')
