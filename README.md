@@ -22,9 +22,7 @@ Terminal 2:
     $ cd kaspad/cmd/kaspaminer
     $ kaspaminer --miningaddr=kaspatest:qpuyhaxz2chn3lsvf8g7q5uvaezpp5m7pyny4k8tyq --mine-when-not-synced --testnet
 
-*IMPORTANT: Kaspad 8.4 master has broken testnet genesis, you must replace `--testnet` with `--devnet` and change the mining address to `kaspadev:qpuyhaxz2chn3lsvf8g7q5uvaezpp5m7pygf2jzn8d`.*
-*When changing configuration you may need to delete Kaspa blockchain located in `~/kaspad` folder. On Windows Kaspa blockchain is located in `AppData/Local/Kaspad`.*
-
+*IMPORTANT: `kaspad 8.4 (master)` has a broken testnet genesis block, you must replace `--testnet` with `--devnet` and change the mining address to `kaspadev:qpuyhaxz2chn3lsvf8g7q5uvaezpp5m7pygf2jzn8d`.* *When changing configuration you may need to delete Kaspa blockchain located in `~/kaspad` folder. On Windows Kaspa blockchain is located in `AppData/Local/Kaspad`.* *(When starting, faucet will display it's deposit address.)*
 
 ### Running
 
@@ -32,7 +30,6 @@ Terminal 2:
     $ cd kaspa-faucet
     $ npm install
     $ node kaspa-faucet
-
 
 ### Development Environment
 
