@@ -1,6 +1,6 @@
 # Kaspa Faucet
 
-Miniature faucet website based on Kaspa Wallet library
+Miniature Kaspa faucet website based on [Kaspa Wallet](https://github.com/aspectron/kaspa-wallet) library
 
 ### Setup Kaspad
 
@@ -22,8 +22,8 @@ Terminal 2:
     $ cd kaspad/cmd/kaspaminer
     $ kaspaminer --miningaddr=kaspatest:qpuyhaxz2chn3lsvf8g7q5uvaezpp5m7pyny4k8tyq --mine-when-not-synced --testnet
 
-*IMPORTANT: Kaspad 8.4 master has broken testnet, you must replace `--testnet` with `--devnet` and the mining address to `kaspadev:qpuyhaxz2chn3lsvf8g7q5uvaezpp5m7pygf2jzn8d`.*
-*When changing configuration you may need to delete `home/kaspad` folder. On Windows `AppData/Local/Kaspad`.*
+*IMPORTANT: Kaspad 8.4 master has broken testnet genesis, you must replace `--testnet` with `--devnet` and change the mining address to `kaspadev:qpuyhaxz2chn3lsvf8g7q5uvaezpp5m7pygf2jzn8d`.*
+*When changing configuration you may need to delete Kaspa blockchain located in `~/kaspad` folder. On Windows Kaspa blockchain is located in `AppData/Local/Kaspad`.*
 
 
 ### Running
@@ -71,7 +71,7 @@ Terminal 2:
     $ cd kaspa-faucet
     $ node kaspa-faucet
     
-`node kaspa-faucet` will attempt to bind to all available networks; you can use `--devnet` and `--testnet` flags to have it bind to a single network.
+`node kaspa-faucet` will attempt to bind to all available networks. You can use `--devnet` and `--testnet` flags to have it bind to a single network.
 
 
 
