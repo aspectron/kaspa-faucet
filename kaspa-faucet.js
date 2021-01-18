@@ -240,6 +240,11 @@ class KaspaFaucet extends EventEmitter{
 				console.log(`[${network}] syncVirtualSelectedParentBlueScore Error`, e)
 			})
 
+			wallet.on("ready", (result)=>{
+				log.info(`ready (${network})`);
+				flowHttp.sockets.publish(`${network}-ready`);
+			});
+
 			wallet.on("api-online", (result)=>{
 				log.info(`${network} - gRPC API is online`);
 				flowHttp.sockets.publish(`${network}-api-online`);
