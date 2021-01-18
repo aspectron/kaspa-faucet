@@ -1,6 +1,6 @@
 # Kaspa Faucet
 
-Miniature Kaspa faucet website based on [Kaspa Wallet](https://github.com/aspectron/kaspa-wallet) library
+Miniature Kaspa faucet website based on [Kaspa Wallet](https://github.com/aspectron/kaspa-wallet) framework
 
 ### Setup Kaspad
 
