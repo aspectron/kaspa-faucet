@@ -40,10 +40,11 @@ export class FaucetBalance extends BaseElement {
 	onlineCallback() {
 		const { rpc } = flow.app;
 
-		this.balanceUpdates = rpc.subscribe(`balance`);
+		this.balanceUpdates = rpc.subscribe('balance');
 		(async()=>{
 			for await(const msg of this.balanceUpdates) {
-				const { network, available, pending } = msg.data;
+				const { network, balance:{available, pending} } = msg.data;
+				console.log("balance:msg.data", msg.data)
 				try {
 					this.balances[network] = {
 						available,

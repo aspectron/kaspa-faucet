@@ -182,10 +182,14 @@ class KaspaFaucet extends EventEmitter{
 				socket.publish('addresses', { addresses });
 				networks.forEach(network=>{
 					let wallet = this.wallets[network];
+					
 					if(!wallet)
 						return;
 					const { balance } = wallet;
-					socket.publish(`balance`, { network, balance });
+					//setTimeout(()=>{
+						socket.publish(`balance`, { network, balance });
+						console.log("wallet balance",  balance)
+					//}, 50);
 					this.publishLimit({ network, socket, ip });
 				});
 			}
