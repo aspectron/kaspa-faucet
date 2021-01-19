@@ -14,11 +14,10 @@ export class KaspaTransaction extends BaseElement {
             .transaction { 
 				margin-top: 4px;
 			}
-			.transaction :nth-child(1) { width: 140px;  text-align:center; }
-			.transaction :nth-child(2) { width: 120px; text-align:center; }
-			.transaction :nth-child(3) { width: 300px; }
+			.transaction :nth-child(1) { width: var(--value-column-width);  text-align:center; }
+			.transaction :nth-child(2) { width: var(--blue-score-column-width); text-align:center; }
+			.transaction :nth-child(3) { width: var(--txid-column-width); }
 			.xx-transaction div { border: 1px solid red; }
-			
             .caption { font-family : "Open Sans"; font-size: 14px; }
             .value { font-family : "Consolas"; font-size: 22px; color:#666; }
             /*.value { font-family : "IBM Plex Mono"; font-size: 22px;  }*/
@@ -27,12 +26,10 @@ export class KaspaTransaction extends BaseElement {
 				display: flex;
 				flex-direction: row;
 			}
-			
 			[col] {
 				display: flex;
 				flex-direction: column;
 			}
-			
 		`;
 	}
 

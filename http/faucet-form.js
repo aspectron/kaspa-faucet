@@ -1,5 +1,6 @@
 import {dpc, html, css, BaseElement, FlowFormat } from '/flow/flow-ux/flow-ux.js';
 import {Decimal} from '/flow/flow-ux/extern/decimal.js';
+import {KSP} from './ksp.js';
 
 export class FaucetForm extends BaseElement {
 	static get properties(){
@@ -20,10 +21,9 @@ export class FaucetForm extends BaseElement {
 			.error{color:red;min-height:30px;padding:16px;box-sizing:border-box;font-family:"Open Sans";font-size:16px;}
 			.captcha{min-height:50px;margin-top:20px;}
 			.message{margin:30px 0px;font-family:"Open Sans";font-size:16px;font-weight:normal;}
-			
 		`
 	}
-	
+
 	constructor(){
 		super();
 		this.networks = [];
@@ -35,10 +35,10 @@ export class FaucetForm extends BaseElement {
 	onlineCallback() {
 		const { rpc } = flow.app;
 	}
-	
+
 	offlineCallback() {
 	}
-	
+
 
 	render(){
 
@@ -59,24 +59,7 @@ export class FaucetForm extends BaseElement {
 		`;
 	}
 
-
-
-
 	submit(){
-		/*
-		FlowDialog.show({
-			title:"Test Dialog",
-			body: html`
-				<div class="msg">
-					We have successfully sent
-					<b class="address">${Decimal(234).mul(1e-8)}</b> to <b class="amount">xxxxxx</b>.
-				</div>
-			`,
-			cls:"custom",
-			btns:['Close:primary:close'],//, {text:"Ok", cls:"success", value:"ok-btn"}]
-//			btns:['Close:danger:close', {text:"Ok", cls:"success", value:"ok-btn"}]
-		});
-		*/
 
   		let qS = this.renderRoot.querySelector.bind(this.renderRoot);
 		let address = qS(".address").value;
@@ -95,7 +78,7 @@ export class FaucetForm extends BaseElement {
 			return this.setError("Please enter address");
 
 		amount = parseFloat(amount) || 0;
-		if(!amount || amount<1 || amount>1000)
+		if(!amount || amount<1e-8 || amount>100000)
 			return this.setError("Please enter amount between 1-1000");
 		//if(!captcha)
 		//	return
@@ -104,38 +87,69 @@ export class FaucetForm extends BaseElement {
 
 		this.setError(false);
 
+		const duration = (v) => {
+			let hrs = Math.floor(v/1000/60/60);
+			let min = Math.floor(v/1000/60%60);
+			let sec = Math.floor(v/1000%60);
+			if(!hrs && !min && !sec)
+				v;
+				//return this.commas(v);
+			let t = '';
+			if(hrs) t += (hrs < 10 ? '0'+hrs : hrs) + ' h ';
+			if(hrs || min) t += (min < 10 ? '0'+min : min) + ' m ';
+			if(hrs || min || sec) t += (sec < 10 ? '0'+sec : sec) + ' s ';
+			return t;
+		}
+
 		flow.app.rpc.request("faucet-request", {
 			address, network, amount, captcha
-		},(err, result)=>{
-			console.log({err, result});
-			if(err){
-				if(err.error == 'limit') {
-					let { msec_to_reset, available } = err;
-					this.setError(`Unable to send funds: you have ${flow.app.formatKSP(available)} remaining. Your limit will be reset in ${FlowFormat.duration(msec_to_reset)}.`);
+		},(error, result)=>{
+			console.log({error, result});
+			if(error){
+				let msg = '';
+				if(error.error == 'limit') {
+					let { period, available } = error;
+					msg = html`Unable to send funds: you have <b>${KSP(available)}</b> KSP ${ period == null ? html`available.` : html`remaining.<br/>&nbsp;<br/>Your limit will update in ${FlowFormat.duration(period)}.` }`;
 				}
 				else {
-					let text = err.toString();
-					if(/ApiError/.test(text))
-						text = html`${text.split(/:/).map(v=>html`${v}<br/>`)}`;
-					this.setError(text);
+					msg = error.error || error.toString();
+
+					if(/ApiError/.test(msg)) {
+						msg = html`<div class='api-error'>${[msg].map(v=>html`${v}<br/>`)}</div>`;
+					}
 				}
+
+				FlowDialog.show({
+					title:html`<b class="error">Error</b>`,
+					body: html`
+						<div class="msg">
+							${ msg }
+						</div>
+					`,
+					cls:"custom",
+					btns:['Close:primary:close'],//, {text:"Ok", cls:"success", value:"ok-btn"}]
+		//			btns:['Close:danger:close', {text:"Ok", cls:"success", value:"ok-btn"}]
+				});
+	
 				return;
 			}
 
-			this.setError(false);
-			console.log("SERVER RESPONSE:", result);
-
-			/*
+			//this.setError(false);
+			// console.log("SERVER RESPONSE:", result);
 			FlowDialog.show({
+				title:"Success",
 				body: html`
-					<div>
-					We have successfully sent <b>${Decimal(result.amount).mul(1e-8)}</b> to <b>${address}</b>.
+					<div class="msg">
+						We have successfully sent
+						<b>${KSP(result.amount)} KSP</b> to the requested address:<br/>&nbsp;<br/>
+						<b>${address}</b><br/>&nbsp;<br/>
+						<span class='txid'><nobr>TXID: ${result.txid}</nobr></span>
 					</div>
-                    <flow-btn slot="buttons" @click="${close}">Close</flow-btn>
-				`
+				`,
+				cls:"custom",
+				btns:['Close:primary:close'],//, {text:"Ok", cls:"success", value:"ok-btn"}]
+	//			btns:['Close:danger:close', {text:"Ok", cls:"success", value:"ok-btn"}]
 			});
-			*/
-			FlowDialog.alert(`Success`, html`We have successfully sent <b>${Decimal(result.amount).mul(1e-8)}</b> to <b>${address}</b>.`);
 		})
 	}
 

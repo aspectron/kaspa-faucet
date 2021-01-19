@@ -255,12 +255,31 @@ flow-dialog.custom .address,
 flow-dialog.custom .amount {
     font-family:"Consolas";
     font-size:16px;
+    /*font-weight: bold;*/
 }
 
 flow-dialog {
     --flow-btn-hover-border-color:  var(--flow-primary-color);
 	--flow-btn-hover-primary-bg-color:white;
 	--flow-btn-hover-primary-color: var(--flow-primary-color);
+}
+
+flow-dialog.custom .api-error {
+    font-family: "Consolas";
+    font-size: 16px;
+    max-width: 540px;
+    overflow-wrap: break-word;
+}
+
+flow-dialog.custom .txid {
+    font-family: "Consolas";
+    font-size: 12px;
+}
+
+
+flow-dialog.custom .error {
+    color: #a00;
+    font-weight: bold;
 }
 
   /*
@@ -280,3 +299,10 @@ flow-dialog {
   }
 
   [flex] { flex:1; }
+
+
+body {
+    --value-column-width: 170px;
+    --blue-score-column-width: 120px;
+    --txid-column-width: 300px;
+}

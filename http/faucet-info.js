@@ -1,9 +1,11 @@
 import {dpc, html, css, BaseElement, FlowFormat} from '/flow/flow-ux/flow-ux.js';
+import { KSP } from './ksp.js'
 
 export class FaucetInfo extends BaseElement {
 	static get properties(){
 		return {
             limit:{type:Number},
+            available:{type:Number},
             address:{type:String}
 		}
 	}
@@ -18,42 +20,11 @@ export class FaucetInfo extends BaseElement {
     constructor() {
         super();
         this.limit = 0;
+        this.available = 0;
         this.address = '';
-        // this.limits = [];
-        // this.addresses = [];
-
     }
 
-
-	onlineCallback() {
-		// const { rpc } = flow.app;
-		// this.addressUpdates = rpc.subscribe(`addresses`);
-		// (async()=>{
-		// 	for await(const msg of this.addressUpdates) {
-        //         const { addresses } = msg.data;
-        //         this.addresses = addresses;
-        //         // this.requestUpdate();
-		// 		// this.networks = networks;
-		// 		// console.log("available networks:",networks);
-		// 	}
-		// })().then();
-
-        // this.limitUpdates = rpc.subscribe(`limits`);
-		// (async()=>{
-		// 	for await(const msg of this.limitUpdates) {
-        //         this.limits = msg.data.limits;
-		// 	}
-		// })().then();
-	}
-
-	offlineCallback() {
-		// this.limitUpdates.stop();
-	}
-
-
 	render(){
-        // const address = this.addresses[this.network];
-        // const limit = this.limits[this.network];
         return html`
             <div class="info">
                 <div class="caption">Welcome to Kaspa Faucet</div>
@@ -63,7 +34,8 @@ export class FaucetInfo extends BaseElement {
                     If the faucet address has enough Kaspa, it will send it to an address you provide. </p>
                     <p>Faucet can receive funds at the following address:</p>
                     <p><b>${this.address}</b></p>
-                    <p>Requests are limited to the maximum of <b>${FlowFormat.commas(this.limit)}</b> KSP per IP address, per <b>24 hours</b>.</p>
+                    <p>Requests are limited to the maximum of <b>${KSP(this.limit)} KSP</b> per IP address, per <b>24 hours</b>.</p>
+                    <p>You currently have <b>${KSP(this.available)} KSP</b> ${this.limit==this.available?'available':'remaining'}.</p>
                 </div>
             </div>
 		`;

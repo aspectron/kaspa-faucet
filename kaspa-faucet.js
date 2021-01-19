@@ -66,7 +66,7 @@ class KaspaFaucet extends EventEmitter{
 			let {app} = args;
 			app.use(bodyParser.json())
 			app.use(bodyParser.urlencoded({ extended: true }))
-			
+
 			let rootFolder = this.appFolder;
 
 			let router = new FlowRouter(app, {
@@ -90,8 +90,6 @@ class KaspaFaucet extends EventEmitter{
 
 		await initKaspaFramework();
 
-		// support using --kaspa, --kaspatest --kaspadev --kaspasim from command line
-
 		const aliases = Object.keys(Wallet.networkAliases);
 		let filter = aliases.map((alias) => { return this.options[alias] ? Wallet.networkAliases[alias] : null; }).filter(v=>v);
 
@@ -99,11 +97,6 @@ class KaspaFaucet extends EventEmitter{
 		this.wallets = { }
 		this.addresses = { }
 		this.limits = { }
-
-		// const limits_ = {
-		// 	kaspa : 1000,
-		// 	kaspatest : 2500,
-		// }
 
 		if(this.options.rpc && filter.length != 1) {
 			log.error('You must explicitly use the network flag when specifying the RPC option');
@@ -116,7 +109,6 @@ class KaspaFaucet extends EventEmitter{
 				log.verbose(`Skipping creation of '${network}'...`);
 				continue;
 			}
-
 
 			const host = this.options.rpc || `127.0.0.1:${port}`;
 			log.info(`Creating gRPC binding for network '${network}' at ${host}`);
@@ -136,7 +128,7 @@ class KaspaFaucet extends EventEmitter{
 				);
 			}
 			this.addresses[network] = this.wallets[network].receiveAddress;
-			this.limits[network] = this.options.limit === false ? 0 : 1000; // || limits_[network] || 1000;
+			this.limits[network] = this.options.limit === false ? Number.MAX_SAFE_INTEGER : Decimal(this.options.limit || 1000).mul(1e8).toNumber(); // || limits_[network] || 1000;
 			this.wallets[network].setLogLevel(log.level);
 
 			log.info(`${Wallet.networkTypes[network].name} address - ${this.addresses[network]}`);
@@ -145,40 +137,72 @@ class KaspaFaucet extends EventEmitter{
 		this.networks = Object.keys(this.wallets);
 	}
 
+	calculateAvailable({ network, ip }) {
+		if(this.limits[network] == Number.MAX_SAFE_INTEGER)
+			return Number.MAX_SAFE_INTEGER;
+
+		let user = this.ip_limit_map.get(ip);
+		if(!user) {
+			user = { };
+			this.ip_limit_map.set(ip,user);
+		}
+
+		if(!user[network])
+			user[network] = [];
+
+		const ts = Date.now();
+		const period_start = ts-DAY;
+		const transactions = user[network] = user[network].filter(tx => tx.ts > period_start);
+		const spent = transactions.reduce((v, tx) => tx.amount+v, 0);
+		const available = this.limits[network] - spent;
+		const period = transactions.length ? transactions[0].ts - period_start : null;
+		return { available, period };
+	}
+
+	updateLimit({ network, ip, amount }) {
+		if(this.limits[network] == Number.MAX_SAFE_INTEGER)
+			return;
+		this.ip_limit_map.get(ip)[network].push({ ts : Date.now(), amount });
+	}
+
+	publishLimit({ network, socket, ip }) {
+		const limit = this.limits[network];
+		const { available } = this.calculateAvailable({ network, ip });
+		socket.publish(`limit`, { network, available, limit });
+	}
+
 	async initFaucet() {
-
 		const { flowHttp } = this;
-
-		// this.flowHttp.on('socket.connect')
-
 		let socketConnections = flowHttp.sockets.events.subscribe('connect');
 		(async()=>{
 			for await(const event of socketConnections) {
-				//console.log("###################################### socket connect")
 				const { networks, addresses, limits } = this;
-				//event.socket.write(JSON.stringify(['networks', addresses]));
-				event.socket.publish('networks', { networks });
-				event.socket.publish('addresses', { addresses });
-				event.socket.publish('limits', { limits });
+				const { socket, ip } = event;
+				socket.publish('networks', { networks });
+				socket.publish('addresses', { addresses });
 				networks.forEach(network=>{
 					let wallet = this.wallets[network];
 					if(!wallet)
-						return
-					event.socket.publish(`balance-${network}`, wallet.balance);
-				})
+						return;
+					const { balance } = wallet;
+					socket.publish(`balance`, { network, balance });
+					this.publishLimit({ network, socket, ip });
+				});
 			}
 		})();
-
 
 		let requests = flowHttp.sockets.subscribe("faucet-request");
 		(async ()=>{
 			for await(const msg of requests) {
-				const ts = Date.now();
-				const period_start = ts-DAY;
-				const { data, ip } = msg;
-				log.verbose(`request[${ip}]: `, data);
-				const { address, network, amount, captcha } = data;
-				// TODO check amount
+				const { data, ip, socket } = msg;
+				const { address, network, amount : amount_, captcha } = data;
+
+				const amount = parseInt(amount_);
+				if(isNaN(amount) || !amount || amount < 0) {
+					msg.error(`Invalid amount: ${amount_}`);
+					continue;
+				}
+				log.info(`request from ${ip} for ${Wallet.KSP(amount)}`);
 				const limit = this.limits[network] === false ? Number.MAX_SAFE_INTEGER : (this.limits[network] || 0);
 
 				if(!this.networks.includes(network)) {
@@ -196,39 +220,25 @@ class KaspaFaucet extends EventEmitter{
 					continue;
 				}
 
-
-				let user = this.ip_limit_map.get(ip);
-				if(!user) {
-					user = { };
-					this.ip_limit_map.set(ip,user);
-				}
-
-				if(!user[network])
-					user[network] = [];
-
-				user[network] = user[network].filter(tx => tx.ts > period_start);
-				const transactions = user[network];
-				const spent = transactions.reduce((v, tx) => tx.amount+v, 0);
-				//const available = limit - spent;
-				console.log("limit:"+limit, "spent:"+spent)
-				const available = Decimal(limit).mul(1e8).sub(spent);
-				if(available.lt(amount)) {
-					msg.error(`Unable to send funds. ${Decimal(available).mul(1e-8).toFixed(8)} KSP remains available, ${amount} is needed.`);
+				const { available, period } = this.calculateAvailable({ network, ip });
+				if(available < amount) {
+					msg.error({ error: 'limit', available, period });
 					continue;
 				}
 				else {
 					try {
-						log.info(`Sending ${amount} to ${address}`);
+						const fee = 0;
 						let response = await this.wallets[network].submitTransaction({
 							toAddr: address,
-							amount: amount,
-							fee: 400,
+							amount, fee,
+							networkFeeMax : 1e8,
 							// changeAddrOverride: this.addresses[network]
 						});
 
-						msg.respond({ amount, address, network, response, available });
-						transactions.push({ts,amount});
-
+						const txid = response?.txid || null;
+						msg.respond({ amount, address, network, txid, available });
+						this.updateLimit({ network, ip, amount });
+						this.publishLimit({ network, socket, ip });
 					} catch(ex) {
 						console.log(ex);
 						msg.respond(ex);
@@ -246,45 +256,44 @@ class KaspaFaucet extends EventEmitter{
 
 			wallet.on("ready", (result)=>{
 				log.info(`ready (${network})`);
-				flowHttp.sockets.publish(`${network}-ready`);
+				flowHttp.sockets.publish(`wallet-ready`, { network });
 			});
 
 			wallet.on("api-online", (result)=>{
 				log.info(`${network} - gRPC API is online`);
-				flowHttp.sockets.publish(`${network}-api-online`);
+				flowHttp.sockets.publish(`wallet-online`, { network });
 			});
 
 			wallet.on("api-offline", (result)=>{
 				log.info(`${network} - gRPC API is offline`);
-				flowHttp.sockets.publish(`${network}-api-online`);
+				flowHttp.sockets.publish(`wallet-offline`, { network });
+			});
+
+			wallet.on("sync-start", (result)=>{
+				flowHttp.sockets.publish(`sync-start`, { network });
+			});
+
+			wallet.on("sync-finish", (result)=>{
+				flowHttp.sockets.publish(`sync-finish`, { network });
 			});
 
 			wallet.on("blue-score-changed", (result)=>{
 				let {blueScore} = result;
 				//console.log(`[${network}] blue-score-changed: result, blueScore:`, result, blueScore)
-				flowHttp.sockets.publish(`blue-score-${network}`, { blueScore });
+				flowHttp.sockets.publish(`blue-score`, { blueScore, network });
 			})
 
 			wallet.on("balance-update", (detail)=>{
 				const { balance, available, pending } = detail;
-				//console.log(`[${network}] wallet:balance-update`, detail);
-
-				//let txlist = [];
-				// added = added.values().flat();
-				// removed = removed.values().flat();
-				//console.log('info',added,removed)
-				flowHttp.sockets.publish(`balance-${network}`, { available, pending });
-				//flowHttp.sockets.publish('transactions', { added, removed });
+				flowHttp.sockets.publish(`balance`, { available, pending, network });
 			})
 
 			let seq = 0;
 			wallet.on("utxo-change", (detail)=>{
-				//console.log(`[${network}] wallet:utxo-change`,'added:', detail.added.entries(), 'removed:', detail.removed.entries());
 				let {added,removed} = detail;
-				//console.log("change",[...added.values()].flat(),removed);
 				added = [...added.values()].flat();
 				removed = [...removed.values()].flat();
-				flowHttp.sockets.publish(`utxo-change-${network}`, { added, removed, seq : seq++ });
+				flowHttp.sockets.publish(`utxo-change`, { network, added, removed, seq : seq++ });
 			})
 
 			/*
@@ -361,9 +370,15 @@ class KaspaFaucet extends EventEmitter{
 			})
 
 		program.parse();
-
-
 	}
+
+	KSP(v) {
+		var [int,frac] = Decimal(v).mul(1e-8).toFixed(8).split('.');
+		int = int.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		frac = frac.replace(/0+$/,'');
+		return frac ? `${int}.${frac}` : int;
+	}
+
 }
 
 (async () => {
