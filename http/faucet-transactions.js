@@ -48,9 +48,8 @@ export class FaucetTransactions extends BaseElement {
 				const transactions = this.transactions[network] || (this.transactions[network] = []);
 				added.forEach(tx=>{
 					transactions.unshift({
-						...tx,
-						amount : Decimal(tx.amount).mul(1e-8)
-					}); 
+						...tx
+					});
 				});
 				while(transactions.length > this.limit)
 					transactions.pop();
