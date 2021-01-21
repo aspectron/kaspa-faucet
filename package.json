@@ -21,6 +21,7 @@
 		"kaspa-grpc": "aspectron/kaspa-grpc",
 		"kaspa-grpc-node": "aspectron/kaspa-grpc-node",
 		"kaspa-wallet": "aspectron/kaspa-wallet",
+		"kaspa-wallet-worker": "aspectron/kaspa-wallet-worker",
 		"lit-element": "*",
 		"sockjs": "*",
 		"sockjs-client": "*"

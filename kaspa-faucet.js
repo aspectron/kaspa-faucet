@@ -21,7 +21,7 @@ const {FlowHttp} = require('@aspectron/flow-http')({
 	CookieSignature,
 });
 const Decimal = require('decimal.js');
-const { Wallet, initKaspaFramework, log } = require('kaspa-wallet');
+const { Wallet, initKaspaFramework, log } = require('kaspa-wallet-worker');
 const { RPC } = require('kaspa-grpc-node');
 const DAY = 1000*60*60*24;
 const HOUR = 1000*60*60;
@@ -127,7 +127,7 @@ class KaspaFaucet extends EventEmitter{
 					{disableAddressDerivation:true}
 				);
 			}
-			this.addresses[network] = this.wallets[network].receiveAddress;
+			this.addresses[network] = await this.wallets[network].receiveAddress;
 			this.limits[network] = this.options.limit === false ? Number.MAX_SAFE_INTEGER : Decimal(this.options.limit || 1000).mul(1e8).toNumber(); // || limits_[network] || 1000;
 			this.wallets[network].setLogLevel(log.level);
 
@@ -379,7 +379,7 @@ class KaspaFaucet extends EventEmitter{
 	KSP(v) {
 		var [int,frac] = Decimal(v).mul(1e-8).toFixed(8).split('.');
 		int = int.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-		frac = frac.replace(/0+$/,'');
+		frac = frac?.replace(/0+$/,'');
 		return frac ? `${int}.${frac}` : int;
 	}
 
