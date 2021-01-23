@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const EventEmitter = require("events");
 const FlowRouter = require('@aspectron/flow-router');
 const utils = require('@aspectron/flow-utils');
-require("colors");
+//require("colors");
 const fs = require("fs");
 const args = utils.args();
 const sockjs = require('sockjs');
