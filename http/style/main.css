@@ -229,7 +229,7 @@ body.flow-theme-light{
 .content {
     width: 100%;
 }
-
+.balance-wrapper{position:relative;}
 .balance-wrapper::after {
     content: "";
     position: absolute;
@@ -244,7 +244,7 @@ body.flow-theme-light{
     background-repeat: no-repeat;
     /*border: 1px solid red;*/
     background-position: top center;
-    max-width: 50%;
+    background-size:contain;
 }
 
 flow-dialog.custom {
@@ -306,6 +306,7 @@ kaspa-faucet-app .divider{flex:1;}
     .divider{min-width:100%;height:100px}
     .divider:first-child{display:none}
     kaspa-faucet-app .main-area>.content{display:block;}
+    .balance-wrapper::after{height:140%}
 }
 
 
