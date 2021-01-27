@@ -248,6 +248,7 @@ class KaspaFaucet extends EventEmitter{
 							toAddr: address,
 							amount, fee,
 							networkFeeMax : 1e8,
+							calculateNetworkFee:true
 							// changeAddrOverride: this.addresses[network]
 						});
 
