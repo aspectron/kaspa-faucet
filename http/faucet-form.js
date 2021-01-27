@@ -45,8 +45,8 @@ export class FaucetForm extends BaseElement {
 		const { aliases } = flow.app;
 		return html`
 			<div class="message">Enter your address and the amount of Kaspa you want to receive:</div>
-			<flow-input label="Address (Must start with '${this.network}' prfix)" class="address" value="${this.address}"></flow-input>
-			<flow-input label="Amount" class="amount" value="12.99"></flow-input>
+			<flow-input label="Address (Must start with '${this.network}' prfix)" class="address" x-value="${this.address}"></flow-input>
+			<flow-input label="Amount" class="amount" value=""></flow-input>
 			<flow-select label="Network" selected="${this.network}" class="network"
 				@select=${this.networkChange}>
 				${this.networks.map(n => html`<flow-menu-item value="${n}">${aliases[n]}</flow-menu-item>`)}
