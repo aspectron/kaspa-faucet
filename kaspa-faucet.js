@@ -13,10 +13,12 @@ const bodyParser = require('body-parser');
 const Cookie = require("cookie");
 const CookieSignature = require("cookie-signature");
 const { Command, CommanderError } = require('commander');
+const ws = require('ws');
 const {FlowHttp} = require('@aspectron/flow-http')({
 	express,
 	session,
-	sockjs,
+	//sockjs,
+	ws,
 	Cookie,
 	CookieSignature,
 });

@@ -44,7 +44,7 @@ class KaspaFaucetApp extends FlowApp {
 	}
 
 	async init(){
-		await this.initSockjsRPC({
+		await this.initSocketRPC({
 			timeout : 90,
 			args:{
 				transports:["websocket"]
