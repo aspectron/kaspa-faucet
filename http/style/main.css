@@ -300,6 +300,14 @@ flow-dialog.custom .error {
 
   [flex] { flex:1; }
 
+kaspa-faucet-app .divider{flex:1;}
+@media (max-width:1048px){
+    .balance-wrapper,.form-wrapper{max-width:600px;margin:0px auto;min-width:0px;width:95%}
+    .divider{min-width:100%;height:100px}
+    .divider:first-child{display:none}
+    kaspa-faucet-app .main-area>.content{display:block;}
+}
+
 
 body {
     --value-column-width: 170px;
