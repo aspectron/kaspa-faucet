@@ -6,7 +6,7 @@
 	},
 	"main": "kaspa-faucet.js",
 	"dependencies": {
-		"@aspectron/flow-http": ">=0.2.0",
+		"@aspectron/flow-http": ">=0.2.2",
 		"@aspectron/flow-router": "aspectron/flow-router",
 		"@aspectron/flow-utils": "*",
 		"@aspectron/flow-ux": "aspectron/flow-ux",
