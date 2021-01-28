@@ -37,6 +37,7 @@ class KaspaFaucet extends EventEmitter{
 		this.appFolder = appFolder;
 		this.config = utils.getConfig(path.join(appFolder, "config", "kaspa-faucet"));
 		this.ip_limit_map = new Map();
+		this.cache = { };
 
 		this.options = {
 			port : 3000
@@ -200,9 +201,17 @@ class KaspaFaucet extends EventEmitter{
 					const { balance } = wallet;
 					//setTimeout(()=>{
 						socket.publish(`balance`, { network, balance });
-						console.log("wallet balance",  balance)
+						//console.log("wallet balance",  balance)
 					//}, 50);
 					this.publishLimit({ network, socket, ip });
+
+					let cache = this.cache[network];
+					if(cache && cache.length) {
+						cache.forEach((msg) => {
+							socket.publish(`utxo-change`, msg);
+						})
+					}
+
 				});
 			}
 		})();
@@ -306,11 +315,15 @@ class KaspaFaucet extends EventEmitter{
 			})
 
 			let seq = 0;
+			this.cache[network] = [];
 			wallet.on("utxo-change", (detail)=>{
 				let {added,removed} = detail;
 				added = [...added.values()].flat();
 				removed = [...removed.values()].flat();
 				flowHttp.sockets.publish(`utxo-change`, { network, added, removed, seq : seq++ });
+				this.cache[network].push({ network, added, removed, seq });
+				while(this.cache[network].length > 24)
+					this.cache[network].shift();
 			})
 
 			/*
