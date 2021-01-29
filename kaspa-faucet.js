@@ -325,24 +325,6 @@ class KaspaFaucet extends EventEmitter{
 				while(this.cache[network].length > 24)
 					this.cache[network].shift();
 			})
-
-			/*
-			//utxoSync() debug....
-			wallet.addressManager.receiveAddress.next();
-			wallet.addressManager.receiveAddress.next();
-			wallet.addressManager.receiveAddress.next();
-			setTimeout(()=>{
-				wallet.addressManager.receiveAddress.next();
-				wallet.addressManager.receiveAddress.next();
-				wallet.addressManager.receiveAddress.next();
-			}, 1000)
-
-			/*
-			await wallet.addressDiscovery(20)
-		    .catch(e=>{
-		        console.log("addressDiscovery:error", e)
-		    })
-		    */
 		}
 	}
 
@@ -351,7 +333,7 @@ class KaspaFaucet extends EventEmitter{
 		const program = this.program = new Command();
 		program
 			.version('0.0.1', '--version')
-			.description('Kaspa Wallet client')
+			.description('Kaspa Faucet')
 			.helpOption('--help','display help for command')
 			.option('--log <level>',`set log level ${logLevels.join(', ')}`, (level)=>{
 				if(!logLevels.includes(level))
