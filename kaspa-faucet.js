@@ -227,7 +227,7 @@ class KaspaFaucet extends EventEmitter{
 					msg.error(`Invalid amount: ${amount_}`);
 					continue;
 				}
-				log.info(`request from ${ip} for ${Wallet.KSP(amount)}`);
+				log.info(`request from ${ip} for ${Wallet.KAS(amount)}`);
 				const limit = this.limits[network] === false ? Number.MAX_SAFE_INTEGER : (this.limits[network] || 0);
 
 				if(!this.networks.includes(network)) {
@@ -372,13 +372,13 @@ class KaspaFaucet extends EventEmitter{
 					throw new Error('Port number is out of range');
 				return port;
 			})
-			.option('--limit <limit>',`KSP/day limit per IP`, (limit)=>{
+			.option('--limit <limit>',`KAS/day limit per IP`, (limit)=>{
 				limit = parseFloat(limit);
 				if(isNaN(limit) || limit <= 0)
-					throw new Error('KSP/day limit is invalid');
+					throw new Error('KAS/day limit is invalid');
 				return limit;
 			})
-			.option('--no-limit','disable KSP/day limit')
+			.option('--no-limit','disable KAS/day limit')
             .option('--rpc <address>','use custom RPC address <host:port>')
 			;
 
@@ -402,7 +402,7 @@ class KaspaFaucet extends EventEmitter{
 		program.parse();
 	}
 
-	KSP(v) {
+	KAS(v) {
 		var [int,frac] = Decimal(v).mul(1e-8).toFixed(8).split('.');
 		int = int.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 		frac = frac?.replace(/0+$/,'');

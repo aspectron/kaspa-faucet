@@ -1,5 +1,5 @@
 import {dpc, html, css, BaseElement, FlowFormat} from '/flow/flow-ux/flow-ux.js';
-import {KSP} from './ksp.js';
+import {KAS} from './kas.js';
 
 export class KaspaTransaction extends BaseElement {
 	static get properties(){
@@ -45,7 +45,7 @@ export class KaspaTransaction extends BaseElement {
 
         return html`
             <div class='transaction' row>
-				<div class='value'>${(tx.amount>0?' ':'')+KSP(tx.amount, true)}</div>
+				<div class='value'>${(tx.amount>0?' ':'')+KAS(tx.amount, true)}</div>
 				<div class='value'>${FlowFormat.commas(tx.blockBlueScore)}</div>
 				<div class='value'>${tx.transactionId.substring(0,20)}</div>
             </div>

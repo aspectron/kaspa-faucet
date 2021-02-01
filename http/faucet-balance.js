@@ -1,5 +1,5 @@
 import {dpc, html, css, BaseElement, FlowFormat} from '/flow/flow-ux/flow-ux.js';
-import { KSP } from './ksp.js'
+import { KAS } from './kas.js'
 
 export class FaucetBalance extends BaseElement {
 	static get properties(){
@@ -77,8 +77,8 @@ export class FaucetBalance extends BaseElement {
 
 	render(){
 
-		const available = this.balances[this.network]?.available ? KSP(this.balances[this.network].available)+' KSP' : '---';
-		const pending = this.balances[this.network]?.pending ? KSP(this.balances[this.network].pending)+' KSP' : null;
+		const available = this.balances[this.network]?.available ? KAS(this.balances[this.network].available)+' KAS' : '---';
+		const pending = this.balances[this.network]?.pending ? KAS(this.balances[this.network].pending)+' KAS' : null;
 		const blueScore = this.blueScores[this.network] ? FlowFormat.commas(this.blueScores[this.network]) : '---';
 
         return html`

@@ -1,6 +1,6 @@
 import {dpc, html, css, BaseElement, FlowFormat } from '/flow/flow-ux/flow-ux.js';
 import {Decimal} from '/flow/flow-ux/extern/decimal.js';
-import {KSP} from './ksp.js';
+import {KAS} from './kas.js';
 
 export class FaucetForm extends BaseElement {
 	static get properties(){
@@ -46,7 +46,7 @@ export class FaucetForm extends BaseElement {
 		return html`
 			<div class="message">Enter your address and the amount of Kaspa you want to receive:</div>
 			<flow-input label="Address (Must start with '${this.network}' prfix)" class="address" x-value="${this.address}"></flow-input>
-			<flow-input label="Amount (KSP)" class="amount" value=""></flow-input>
+			<flow-input label="Amount (KAS)" class="amount" value=""></flow-input>
 			<flow-select label="Network" selected="${this.network}" class="network"
 				@select=${this.networkChange}>
 				${this.networks.map(n => html`<flow-menu-item value="${n}">${aliases[n]}</flow-menu-item>`)}
@@ -111,7 +111,7 @@ export class FaucetForm extends BaseElement {
 				let msg = '';
 				if(error.error == 'limit') {
 					let { period, available } = error;
-					msg = html`Unable to send funds: you have <b>${KSP(available)}</b> KSP ${ period == null ? html`available.` : html`remaining.<br/>&nbsp;<br/>Your limit will update in ${FlowFormat.duration(period)}.` }`;
+					msg = html`Unable to send funds: you have <b>${KAS(available)}</b> KAS ${ period == null ? html`available.` : html`remaining.<br/>&nbsp;<br/>Your limit will update in ${FlowFormat.duration(period)}.` }`;
 				}
 				else {
 					msg = error.error || error.toString();
@@ -143,7 +143,7 @@ export class FaucetForm extends BaseElement {
 				body: html`
 					<div class="msg">
 						We have successfully sent
-						<b>${KSP(result.amount)} KSP</b> to the requested address:<br/>&nbsp;<br/>
+						<b>${KAS(result.amount)} KAS</b> to the requested address:<br/>&nbsp;<br/>
 						<b>${address}</b><br/>&nbsp;<br/>
 						<span class='txid'><nobr>TXID: ${result.txid}</nobr></span>
 					</div>
