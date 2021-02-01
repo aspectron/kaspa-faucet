@@ -31,6 +31,6 @@
 		"type": "git",
 		"url": "git+https://github.com/aspectron/kaspa-faucet"
 	},
-	"license": "UNLICENSED",
+	"license": "ICS",
 	"private": true
 }
