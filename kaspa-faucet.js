@@ -23,10 +23,10 @@ const {FlowHttp} = require('@aspectron/flow-http')({
 	CookieSignature,
 });
 const Decimal = require('decimal.js');
-const { Wallet, initKaspaFramework, log } = require('kaspa-wallet-worker');
+const { Wallet, initKaspaFramework, log } = require('@kaspa/wallet-worker');
 Wallet.setWorkerLogLevel("none");
 
-const { RPC } = require('kaspa-grpc-node');
+const { RPC } = require('@kaspa/grpc-node');
 const DAY = 1000*60*60*24;
 const HOUR = 1000*60*60;
 const MIN = 1000*60;
