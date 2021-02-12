@@ -1,36 +1,37 @@
 {
-	"name": "@kaspa/faucet",
-	"description": "kaspa-faucet",
-	"scripts": {
-		"start": "node kaspa-faucet"
-	},
-	"main": "kaspa-faucet.js",
-	"dependencies": {
-		"@aspectron/flow-http": ">=0.2.3",
-		"@aspectron/flow-router": "aspectron/flow-router",
-		"@aspectron/flow-utils": "*",
-		"@aspectron/flow-ux": "aspectron/flow-ux",
-		"@webcomponents/webcomponentsjs": "*",
-		"colors": "*",
-		"commander": "^6.2.1",
-		"cookie": "*",
-		"cookie-signature": "*",
-		"decimal.js": "^10.2.1",
-		"express": "*",
-		"express-session": "*",
-		"@kaspa/grpc": "*",
-		"@kaspa/grpc-node": "*",
-		"@kaspa/wallet": "*",
-		"@kaspa/wallet-worker": "*",
-		"lit-element": "*",
-		"sockjs": "*",
-		"sockjs-client": "*",
-		"ws": "^7.4.2"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/aspectron/kaspa-faucet"
-	},
-	"license": "ICS",
-	"private": true
+  "name": "@kaspa/faucet",
+  "version": "0.0.2",
+  "description": "kaspa-faucet",
+  "scripts": {
+    "start": "node kaspa-faucet"
+  },
+  "main": "kaspa-faucet.js",
+  "dependencies": {
+    "@aspectron/flow-http": ">=0.2.4",
+    "@aspectron/flow-router": "aspectron/flow-router",
+    "@aspectron/flow-utils": "*",
+    "@aspectron/flow-ux": "aspectron/flow-ux",
+    "@webcomponents/webcomponentsjs": "*",
+    "colors": "*",
+    "commander": "^6.2.1",
+    "cookie": "*",
+    "cookie-signature": "*",
+    "decimal.js": "^10.2.1",
+    "express": "*",
+    "express-session": "*",
+    "@kaspa/grpc": ">=0.0.4",
+    "@kaspa/grpc-node": ">=0.0.3",
+    "@kaspa/wallet": ">=0.0.4",
+    "@kaspa/wallet-worker": ">=0.0.4",
+    "lit-element": "*",
+    "sockjs": "*",
+    "sockjs-client": "*",
+    "ws": "^7.4.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aspectron/kaspa-faucet"
+  },
+  "license": "ICS",
+  "private": true
 }
