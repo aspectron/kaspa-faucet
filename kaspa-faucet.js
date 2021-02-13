@@ -91,6 +91,25 @@ class KaspaFaucet extends EventEmitter{
 		flowHttp.init();
 	}
 
+/*
+	openWallet() {
+		return new Promise(async (resolve, reject) => {
+			let walletMeta = await storage.getWallet();
+			if(!walletMeta || !walletMeta.wallet?.mnemonic){
+				return reject("Please create wallet")
+			}
+
+			if(walletMeta.encryption=='none'){
+				const { network, rpc } = this;
+				let wallet = Wallet.fromMnemonic(walletMeta.wallet.mnemonic, { network, rpc });
+				return resolve(wallet);
+			}
+
+			//this.decryptWallet(walletMeta.wallet.mnemonic).then(resolve, reject);
+			console.log('Wallet must not be encrypted');
+		})
+	}
+*/
 	async initKaspa() {
 
 		await initKaspaFramework();
@@ -245,7 +264,7 @@ class KaspaFaucet extends EventEmitter{
 					continue;
 				}
 
-				const { available, period } = this.calculateAvailable({ network, ip });
+				let { available, period } = this.calculateAvailable({ network, ip });
 				if(available < amount) {
 					msg.error({ error: 'limit', available, period });
 					continue;
@@ -262,6 +281,7 @@ class KaspaFaucet extends EventEmitter{
 						});
 
 						const txid = response?.txid || null;
+						available -= amount+fee;
 						msg.respond({ amount, address, network, txid, available });
 						this.updateLimit({ network, ip, amount });
 						this.publishLimit({ network, socket, ip });
@@ -272,6 +292,69 @@ class KaspaFaucet extends EventEmitter{
 				}
 			}
 		})();
+
+		const getIp(req) {
+			return req.headers['cf-connecting-ip'] || req.headers['x-real-ip'] || req.headers['x-client-ip'];
+		}
+
+		this.flowHttp.app.get("/api/available/:network", (req,res) => {
+			let network = req.params.network;
+			if(!network || !/^kaspa(test|dev|sim)*/.test(network))
+				return res.json({ error : `Unknown network: ${network}` });
+
+			network = network.split(':').shift();
+			if(!this.networks.includes(network))
+				return res.json({ error : `Unknown network: ${network}` });
+
+			const ip = getIp(req);
+			let { available, period } = this.calculateAvailable({ network, ip });
+			res.json({available, period});
+		});
+
+		this.flowHttp.app.get("/api/get/:address", (req,res) => {
+			const amount_ = req.query.amount;
+			const amount = parseInt(amount_);
+			if(isNaN(amount) || !amount || amount < 0)
+				return res.json({ error : `Invalid amount: ${amount_}` });
+
+			let address = req.params.address;
+			if(!address || !/^kaspa(test|dev|sim)*:/.test(address))
+				return res.json({ error : `Invalid address: ${address}` });
+
+			let network = address.split(':').shift();
+			if(!this.networks.includes(network))
+				return res.json({ error : `Unknown network: ${network}` });
+
+			if(!this.wallets[network])
+				return res.json({ error : `Wallet interface is not active for network ${network}`});
+
+			const ip = getIp(req);
+
+			let { available, period } = this.calculateAvailable({ network, ip });
+			if(available < amount) {
+				return res.json({ error : `Unable to send funds: you have ${this.KAS(available)} KAS ${ period == null ? `available.` : `remaining. Your limit will update in ${this.duration(period)}.` }`});
+			}
+			else {
+				try {
+					const fee = 0;
+					let response = await this.wallets[network].submitTransaction({
+						toAddr: address,
+						amount, fee,
+						networkFeeMax : 1e8,
+						calculateNetworkFee:true,
+						changeAddrOverride: this.addresses[network]
+					});
+
+					available -= amount+fee;
+					const txid = response?.txid || null;
+					this.updateLimit({ network, ip, amount });
+					return res.json({ success : true, amount, address, network, txid, available });
+				} catch(ex) {
+					console.log(ex);
+					res.json({error: 'Internal faucet failure', info : ex.toString()});
+				}
+			}
+		});
 
 		for( const [network,wallet] of Object.entries(this.wallets)) {
 
@@ -326,6 +409,21 @@ class KaspaFaucet extends EventEmitter{
 					this.cache[network].shift();
 			})
 		}
+	}
+
+
+	duration(v) {
+		let hrs = Math.floor(v/1000/60/60);
+		let min = Math.floor(v/1000/60%60);
+		let sec = Math.floor(v/1000%60);
+		if(!hrs && !min && !sec)
+			v;
+			//return this.commas(v);
+		let t = '';
+		if(hrs) t += (hrs < 10 ? '0'+hrs : hrs) + ' h ';
+		if(hrs || min) t += (min < 10 ? '0'+min : min) + ' m ';
+		if(hrs || min || sec) t += (sec < 10 ? '0'+sec : sec) + ' s ';
+		return t;
 	}
 
 	async main() {
