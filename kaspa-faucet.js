@@ -293,11 +293,11 @@ class KaspaFaucet extends EventEmitter{
 			}
 		})();
 
-		const getIp(req) {
+		const getIp = (req) => {
 			return req.headers['cf-connecting-ip'] || req.headers['x-real-ip'] || req.headers['x-client-ip'];
 		}
 
-		this.flowHttp.app.get("/api/available/:network", (req,res) => {
+		this.flowHttp.app.get("/api/available/:network", async (req,res) => {
 			let network = req.params.network;
 			if(!network || !/^kaspa(test|dev|sim)*/.test(network))
 				return res.json({ error : `Unknown network: ${network}` });
@@ -311,7 +311,7 @@ class KaspaFaucet extends EventEmitter{
 			res.json({available, period});
 		});
 
-		this.flowHttp.app.get("/api/get/:address", (req,res) => {
+		this.flowHttp.app.get("/api/get/:address", async (req,res) => {
 			const amount_ = req.query.amount;
 			const amount = parseInt(amount_);
 			if(isNaN(amount) || !amount || amount < 0)
