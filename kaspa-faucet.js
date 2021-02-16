@@ -297,7 +297,10 @@ class KaspaFaucet extends EventEmitter{
 			return req.headers['cf-connecting-ip'] || req.headers['x-real-ip'] || req.headers['x-client-ip'];
 		}
 
-		this.flowHttp.app.get("/api/available/:network", async (req,res) => {
+		this.flowHttp.app.get("/api/:apikey/available/:network", async (req,res) => {
+			if(!req.params.apikey || req.params.apikey != this.config.faucet_apikey)
+				return res.json({ error : "invalid api key"});
+
 			let network = req.params.network;
 			if(!network || !/^kaspa(test|dev|sim)*/.test(network))
 				return res.json({ error : `Unknown network: ${network}` });
@@ -306,12 +309,17 @@ class KaspaFaucet extends EventEmitter{
 			if(!this.networks.includes(network))
 				return res.json({ error : `Unknown network: ${network}` });
 
-			const ip = getIp(req);
+			//const ip = getIp(req);
+			const ip = req.query.ip;
+			
 			let { available, period } = this.calculateAvailable({ network, ip });
 			res.json({available, period});
 		});
 
-		this.flowHttp.app.get("/api/get/:address", async (req,res) => {
+		this.flowHttp.app.get("/api/:apikey/get/:address", async (req,res) => {
+			if(!req.params.apikey || req.params.apikey != this.config.faucet_apikey)
+				return res.json({ error : "invalid api key"});
+
 			const amount_ = req.query.amount;
 			const amount = parseInt(amount_);
 			if(isNaN(amount) || !amount || amount < 0)
@@ -328,7 +336,8 @@ class KaspaFaucet extends EventEmitter{
 			if(!this.wallets[network])
 				return res.json({ error : `Wallet interface is not active for network ${network}`});
 
-			const ip = getIp(req);
+			//const ip = getIp(req);
+			const ip = req.query.ip;
 
 			let { available, period } = this.calculateAvailable({ network, ip });
 			if(available < amount) {
