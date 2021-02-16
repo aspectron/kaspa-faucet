@@ -36,6 +36,8 @@ class KaspaFaucet extends EventEmitter{
 		super();
 		this.appFolder = appFolder;
 		this.config = utils.getConfig(path.join(appFolder, "config", "kaspa-faucet"));
+		if(!this.config.apikeys)
+			log.error('missing config.apikeys configuration');
 		this.ip_limit_map = new Map();
 		this.cache = { };
 
@@ -298,7 +300,7 @@ class KaspaFaucet extends EventEmitter{
 		}
 
 		this.flowHttp.app.get("/api/:apikey/available/:network", async (req,res) => {
-			if(!req.params.apikey || req.params.apikey != this.config.apikey)
+			if(!req.params.apikey || !this.config.apikeys.includes(req.params.apikey))
 				return res.json({ error : "invalid api key"});
 
 			let network = req.params.network;
@@ -317,7 +319,7 @@ class KaspaFaucet extends EventEmitter{
 		});
 
 		this.flowHttp.app.get("/api/:apikey/get/:address", async (req,res) => {
-			if(!req.params.apikey || req.params.apikey != this.config.apikey)
+			if(!req.params.apikey || !this.config.apikeys.includes(req.params.apikey))
 				return res.json({ error : "invalid api key"});
 
 			const amount_ = req.query.amount;
