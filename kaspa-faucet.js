@@ -283,7 +283,7 @@ class KaspaFaucet extends EventEmitter{
 						});
 
 						const txid = response?.txid || null;
-						available -= amount+fee;
+						({ available, period } = this.calculateAvailable({ network, ip }));
 						msg.respond({ amount, address, network, txid, available });
 						this.updateLimit({ network, ip, amount });
 						this.publishLimit({ network, socket, ip });
@@ -356,10 +356,11 @@ class KaspaFaucet extends EventEmitter{
 						changeAddrOverride: this.addresses[network]
 					});
 
-					available -= amount+fee;
+					//available -= amount+fee;
 					const txid = response?.txid || null;
 					this.updateLimit({ network, ip, amount });
-					return res.json({ success : true, amount, address, network, txid, available });
+					({ available, period } = this.calculateAvailable({ network, ip }));
+					return res.json({ success : true, amount, address, network, txid, available, period });
 				} catch(ex) {
 					console.log(ex);
 					res.json({error: 'Internal faucet failure', info : ex.toString()});
