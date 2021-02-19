@@ -185,6 +185,7 @@ body.flow-theme-light{
     --flow-appdrawer-btn-bg: white;
     --flow-menu-item-bg: #f5f4f4;
     --flow-dialog-background-color: white;
+    --flow-dialog-btn-padding: 10px 16px;
     --flow-menu-item-selected-color:var(--flow-color);
     --flow-checkbox-checked-color: white;
 }
