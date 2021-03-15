@@ -361,8 +361,7 @@ class KaspaFaucet extends EventEmitter{
 				return res.json({ error : "invalid api key"});
 			const network = req.params.network;
 			const ip = req.query.ip;
-			let result = getAvailable({network, ip})
-			res.json(result)
+			res.json(await getAvailable({network, ip}))
 		});
 
 		this.flowHttp.app.get("/api/:apikey/get/:address", async (req,res) => {
@@ -372,7 +371,7 @@ class KaspaFaucet extends EventEmitter{
 			const amount = req.query.amount;
 			const address = req.params.address;
 			const ip = req.query.ip;
-			res.json(getKaspa({address, amount, ip}))
+			res.json(await getKaspa({address, amount, ip}))
 		});
 
 		this.flowHttp.app.get("/api/available/:network", async (req,res) => {
