@@ -148,6 +148,7 @@ class KaspaFaucet extends EventEmitter{
 				{ network, rpc },
 				{disableAddressDerivation:true}
 			);
+			this.wallets[network].checkGRPCFlags();
 
 			// if(1) {
 			// 	this.wallets[network] = Wallet.fromMnemonic(
