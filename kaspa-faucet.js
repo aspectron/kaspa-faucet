@@ -471,6 +471,7 @@ class KaspaFaucet extends EventEmitter{
 			})
 			.option('--verbose','log wallet activity')
 			.option('--debug','debug wallet activity')
+			.option('--mainnet','use mainnet network')
 			.option('--testnet','use testnet network')
 			.option('--devnet','use devnet network')
 			.option('--simnet','use simnet network')
