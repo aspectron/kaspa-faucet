@@ -33,7 +33,7 @@ export class FaucetInfo extends BaseElement {
                     <p>It has a defined address, where you can send or mine Kaspa.
                     If the faucet address has enough Kaspa, it will send it to an address you provide. </p>
                     <p>Faucet can receive funds at the following address:</p>
-                    <p><b>${this.address}</b></p>
+                    <p><b class="address-box">${this.address}</b></p>
                     <p>Requests are limited to the maximum of <b>${KAS(this.limit)} KAS</b> per IP address, per <b>24 hours</b>.</p>
                     <p>You currently have <b>${KAS(this.available)} KAS</b> ${this.limit==this.available?'available':'remaining'}.</p>
                 </div>
