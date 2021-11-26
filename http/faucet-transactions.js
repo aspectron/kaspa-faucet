@@ -68,7 +68,7 @@ export class FaucetTransactions extends BaseElement {
         return html`
             <div class='wrapper'>
 				<div class='caption'>Faucet Transactions</div>
-				<div class='headers'><div>VALUE (KAS)</div><div>DAG BLUE SCORE</div><div>TXID</div></div>
+				<div class='headers'><div>VALUE (KAS)</div><div>DAG DAA SCORE</div><div>TXID</div></div>
                 <div class='transactions'>
                     ${
                         transactions.map(tx => html`<kaspa-transaction .data=${tx}></kaspa-transaction>`)
