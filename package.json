@@ -9,7 +9,7 @@
   "dependencies": {
     "@aspectron/flow-http": ">=0.2.4",
     "@aspectron/flow-router": "aspectron/flow-router",
-    "@aspectron/flow-utils": ">=0.1.0",
+    "@aspectron/flow-utils": ">=0.1.1",
     "@aspectron/flow-ux": ">=1.0.0",
     "@webcomponents/webcomponentsjs": "*",
     "colors": "*",
