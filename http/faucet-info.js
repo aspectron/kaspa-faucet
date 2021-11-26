@@ -14,6 +14,18 @@ export class FaucetInfo extends BaseElement {
             :host{display:block; font-family: "Open Sans"; }
             .caption { font-size: 22px; }
             .info-content {font-size:16px;}
+            .address-box{
+                background: #FFF;
+                font-size: 0.82rem;
+                font-weight: bold;
+                /* border: 1px solid; */
+                padding: 9px;
+                border-radius: 5px;
+                box-shadow: var(--flow-input-box-shadow);
+                margin: 10px 0px;
+                display: block;
+                text-align: center;
+            }
 		`
     }
     
