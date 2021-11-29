@@ -72,7 +72,7 @@ export class FaucetForm extends BaseElement {
 		//kaspatest:qq0nvlmn07f6edcdfynt4nu4l4r58rkquuvgt635ac
 		console.log({ address, network, amount, captcha });
 
-		if(!/^kaspa(test|main|dev):[1-9A-HJ-NP-Za-km-z]/.test(address)){
+		if(!/^kaspa:[1-9A-HJ-NP-Za-km-z]/.test(address)){
 			return this.setError("Invalid Address");
 		}
 
