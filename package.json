@@ -1,6 +1,6 @@
 {
   "name": "@kaspa/faucet",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "kaspa-faucet",
   "scripts": {
     "start": "node kaspa-faucet"
@@ -19,10 +19,10 @@
     "decimal.js": "^10.2.1",
     "express": "4.17.1",
     "express-session": "1.17.1",
-    "@kaspa/grpc": ">=1.3.2",
-    "@kaspa/grpc-node": ">=1.0.6",
-    "@kaspa/wallet": ">=1.4.7",
-    "@kaspa/wallet-worker": ">=1.1.5",
+    "@kaspa/grpc": ">=1.3.3",
+    "@kaspa/grpc-node": ">=1.0.7",
+    "@kaspa/wallet": ">=1.4.8",
+    "@kaspa/wallet-worker": ">=1.1.6",
     "sockjs": "*",
     "sockjs-client": "*",
     "ws": "^7.4.2"
