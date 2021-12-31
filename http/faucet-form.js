@@ -51,11 +51,9 @@ export class FaucetForm extends BaseElement {
 				@select=${this.networkChange}>
 				${this.networks.map(n => html`<flow-menu-item value="${n}">${aliases[n]}</flow-menu-item>`)}
 			</flow-select>
-			<!--
 			<div class="captcha">
 				<slot name="captcha"></slot>
 			</div>
-			-->
 			<div class="error">${this.errorMessage}</div>
 			<flow-btn primary @click="${this.submit}">SUBMIT</flow-btn>
 		`;

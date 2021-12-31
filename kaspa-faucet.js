@@ -244,6 +244,22 @@ class KaspaFaucet extends EventEmitter{
 			for await(const msg of requests) {
 				const { data, ip, socket } = msg;
 				const { address, network, amount : amount_, captcha } = data;
+				let captchaRes = {};
+				captchaRes = await utils.validateCaptcha({captcha, secret: this.config.captcha.secret})
+				.catch(err=>{
+					console.log("validateCaptcha:err", err)
+					if(!captchaRes)
+						captchaRes = {}
+					captchaRes.error = {error:"Captcha validation failure"};
+					captchaRes.result = {success:false};
+				});
+
+				//console.log("validateCaptcha:", captchaRes)
+
+				if(!captchaRes?.result.success){
+					msg.error(captchaRes?.error.error || "Captcha validation failure");
+					continue;
+				}
 
 				const amount = parseInt(amount_);
 				if(isNaN(amount) || !amount || amount < 0) {
