@@ -67,7 +67,7 @@ class KaspaFaucetApp extends FlowApp {
 			this.captchaKey = captchaKey;
 			dpc(()=>{
 				buildReCaptcha();
-			}, 100)
+			}, 500)
 		})
 		this.networkUpdates = rpc.subscribe(`networks`);
 		(async()=>{
@@ -130,7 +130,7 @@ class KaspaFaucetApp extends FlowApp {
 				<div col class='form-wrapper'>
 					<faucet-info limit="${limit}" available="${available}" address="${address}"></faucet-info>
 					<faucet-form network="${network}" .networks="${this.networks}" address="${address}" @network-change="${this.onNetworkChange}">
-						<div slot="captcha" class="g-recaptcha" 
+						<div slot="captcha" class="${this.captchaKey? 'g-recaptcha': ''}" 
 							data-sitekey="${this.captchaKey}"></div>
 					</faucet-form>
 				</div>
