@@ -1,5 +1,5 @@
 import '/style/style.js';
-import {dpc, camelCase, html, UID, FlowApp, FlowFormat } from '/flow/flow-ux/flow-ux.js';
+import {dpc, camelCase, html, UID, FlowApp, FlowFormat, buildReCaptcha } from '/flow/flow-ux/flow-ux.js';
 export *  from './faucet-form.js';
 export *  from './faucet-info.js';
 export *  from './faucet-balance.js';
@@ -14,7 +14,8 @@ class KaspaFaucetApp extends FlowApp {
 			networks:{type:Array},
 			addresses:{type:Object},
 			available:{type:Object},
-			limits:{type:Object}
+			limits:{type:Object},
+			captchaKey:{type:String}
 		}
 	}
 	constructor(){
@@ -60,6 +61,14 @@ class KaspaFaucetApp extends FlowApp {
 
 	onlineCallback() {
 		const { rpc } = flow.app;
+		rpc.request("get-config", (err, config)=>{
+			//console.log("config: err, config", err, config)
+			let {captchaKey=""} = config||{};
+			this.captchaKey = captchaKey;
+			dpc(()=>{
+				buildReCaptcha();
+			}, 100)
+		})
 		this.networkUpdates = rpc.subscribe(`networks`);
 		(async()=>{
 			for await(const msg of this.networkUpdates) {
@@ -122,7 +131,7 @@ class KaspaFaucetApp extends FlowApp {
 					<faucet-info limit="${limit}" available="${available}" address="${address}"></faucet-info>
 					<faucet-form network="${network}" .networks="${this.networks}" address="${address}" @network-change="${this.onNetworkChange}">
 						<div slot="captcha" class="g-recaptcha" 
-							data-sitekey="6LeGJSoTAAAAAKtLbjbdiIQTFK9tYLqyRx0Td-MA"></div>
+							data-sitekey="${this.captchaKey}"></div>
 					</faucet-form>
 				</div>
 				<div class="divider"></div>

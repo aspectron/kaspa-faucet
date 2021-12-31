@@ -239,6 +239,15 @@ class KaspaFaucet extends EventEmitter{
 			}
 		})();
 
+		let configRequests = flowHttp.sockets.subscribe("get-config");
+		(async ()=>{
+			let {key:captchaKey} = this.config.captcha;
+			for await(const msg of configRequests) {
+				//const { data, ip, socket } = msg;
+				msg.respond({ captchaKey })
+			}
+		})();
+
 		let requests = flowHttp.sockets.subscribe("faucet-request");
 		(async ()=>{
 			for await(const msg of requests) {
