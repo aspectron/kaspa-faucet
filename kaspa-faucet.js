@@ -130,6 +130,7 @@ class KaspaFaucet extends EventEmitter{
 			process.exit(1);
 		}
 
+		const seeds = fs.readFileSync(".seeds")+"";
 		for (const {network,port} of Object.values(Wallet.networkTypes)) {
 			if(filter.length && !filter.includes(network)) {
 				log.verbose(`Skipping creation of '${network}'...`);
@@ -140,9 +141,9 @@ class KaspaFaucet extends EventEmitter{
 			log.info(`Creating gRPC binding for network '${network}' at ${host}`);
 			const rpc = this.rpc[network] = new RPC({ clientConfig:{ host } });
 			rpc.onError((error)=>{ log.error(`gRPC[${host}] ${error}`); })
-
+			
 			this.wallets[network] = Wallet.fromMnemonic(
-				"about artefact spirit predict toast size earth slow soon allow evoke spell",
+				seeds,
 				// "wasp involve attitude matter power weekend two income nephew super way focus",
 				//"divert crucial husband artist country twice twenty radar gesture gather engage library",
 				{ network, rpc },
