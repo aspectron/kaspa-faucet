@@ -20,7 +20,7 @@ export class KaspaTransaction extends BaseElement {
 			.transaction :nth-child(3) { width: var(--txid-column-width); }
 			.xx-transaction div { border: 1px solid red; }
             .caption { font-family : "Open Sans"; font-size: 14px; }
-            .value { font-family : "Consolas"; font-size: 22px; color:#666; }
+            .value { font-family : "Consolas"; font-size:16px; color:#666; }
             /*.value { font-family : "IBM Plex Mono"; font-size: 22px;  }*/
             /*.value { font-family : "IBM Plex Sans Condensed"; font-size: 22px;  }*/
 			[row] {
