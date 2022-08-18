@@ -400,6 +400,7 @@ class KaspaFaucet extends EventEmitter{
 			res.json(await getKaspa({address, amount, ip}))
 		});
 
+		/*
 		this.flowHttp.app.get("/api/available/:network", async (req,res) => {
 			const network = req.params.network;
 			const ip = getIp(req);
@@ -412,6 +413,7 @@ class KaspaFaucet extends EventEmitter{
 			const ip = getIp(req);
 			res.json(await getKaspa({address, amount, ip}))
 		});
+		*/
 
 		for( const [network,wallet] of Object.entries(this.wallets)) {
 
