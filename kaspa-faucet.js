@@ -39,6 +39,7 @@ class KaspaFaucet extends EventEmitter{
 		if(!this.config.apikeys)
 			log.error('missing config.apikeys configuration');
 		this.ip_limit_map = new Map();
+		this.address_limit_map = new Map();
 		this.cache = { };
 
 		this.options = {
@@ -174,14 +175,18 @@ class KaspaFaucet extends EventEmitter{
 		this.networks = Object.keys(this.wallets);
 	}
 
-	calculateAvailable({ network, ip }) {
+	calculateAvailable({ network, ip, address }) {
 		if(this.limits[network] == Number.MAX_SAFE_INTEGER)
 			return Number.MAX_SAFE_INTEGER;
 
-		let user = this.ip_limit_map.get(ip);
+		let user_by_addr = this.address_limit_map.get(address);
+		let user_by_ip = this.io_limit_map.get(ip);
+
+		let user = user_by_addr || user_by_ip;
 		if(!user) {
 			user = { };
 			this.ip_limit_map.set(ip,user);
+			this.address_limit_map.set(address,user);
 		}
 
 		if(!user[network])
@@ -204,7 +209,7 @@ class KaspaFaucet extends EventEmitter{
 
 	publishLimit({ network, socket, ip }) {
 		const limit = this.limits[network];
-		const { available } = this.calculateAvailable({ network, ip });
+		const { available } = this.calculateAvailable({ network, ip, address : 'default' });
 		socket.publish(`limit`, { network, available, limit });
 	}
 
@@ -294,7 +299,7 @@ class KaspaFaucet extends EventEmitter{
 					continue;
 				}
 
-				let { available, period } = this.calculateAvailable({ network, ip });
+				let { available, period } = this.calculateAvailable({ network, ip, address });
 				if(available < amount) {
 					msg.error({ error: 'limit', available, period });
 					continue;
@@ -311,7 +316,7 @@ class KaspaFaucet extends EventEmitter{
 						});
 
 						const txid = response?.txid || null;
-						({ available, period } = this.calculateAvailable({ network, ip }));
+						({ available, period } = this.calculateAvailable({ network, ip, address }));
 						msg.respond({ amount, address, network, txid, available });
 						this.updateLimit({ network, ip, amount });
 						this.publishLimit({ network, socket, ip });
@@ -336,7 +341,7 @@ class KaspaFaucet extends EventEmitter{
 			if(!this.networks.includes(network))
 				return { error : `Unknown network: ${network}` };
 
-			let { available, period } = this.calculateAvailable({ network, ip });
+			let { available, period } = this.calculateAvailable({ network, ip, address : 'default' });
 			return {available, period};
 		}
 
@@ -355,7 +360,7 @@ class KaspaFaucet extends EventEmitter{
 			if(!this.wallets[network])
 				return { error : `Wallet interface is not active for network ${network}`};
 
-			let { available, period } = this.calculateAvailable({ network, ip });
+			let { available, period } = this.calculateAvailable({ network, ip, address });
 			if(available < amount) {
 				return { error : `Unable to send funds: you have ${this.KAS(available)} KAS ${ period == null ? `available.` : `remaining. Your limit will update in ${this.duration(period)}.` }`};
 			}
@@ -373,7 +378,7 @@ class KaspaFaucet extends EventEmitter{
 					//available -= amount+fee;
 					const txid = response?.txid || null;
 					this.updateLimit({ network, ip, amount });
-					({ available, period } = this.calculateAvailable({ network, ip }));
+					({ available, period } = this.calculateAvailable({ network, ip, address }));
 					return { success : true, amount, address, network, txid, available, period };
 				} catch(ex) {
 					console.log(ex);
