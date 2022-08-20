@@ -180,7 +180,7 @@ class KaspaFaucet extends EventEmitter{
 			return Number.MAX_SAFE_INTEGER;
 
 		let user_by_addr = this.address_limit_map.get(address);
-		let user_by_ip = this.io_limit_map.get(ip);
+		let user_by_ip = this.ip_limit_map.get(ip);
 
 		let user = user_by_addr || user_by_ip;
 		if(!user) {
