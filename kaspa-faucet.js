@@ -179,14 +179,26 @@ class KaspaFaucet extends EventEmitter{
 		if(this.limits[network] == Number.MAX_SAFE_INTEGER)
 			return Number.MAX_SAFE_INTEGER;
 
-		let user_by_addr = this.address_limit_map.get(address);
-		let user_by_ip = this.ip_limit_map.get(ip);
+		let user_by_addr = address && address !== 'default' ? this.address_limit_map.get(address) : undefined;
+		let user_by_ip = ip ? this.ip_limit_map.get(ip) : undefined;
 
-		let user = user_by_addr || user_by_ip;
-		if(!user) {
-			user = { };
-			this.ip_limit_map.set(ip,user);
+		let user;
+		if (!user_by_addr && user_by_ip) {
+			log.info(`Using limit for ip ${ip} for unknown address ${address}`);
+			this.address_limit_map.set(address,user_by_ip);
+			user = user_by_ip;
+		} else if (!user_by_ip && user_by_addr) {
+			log.info(`Using limit for address ${address} for unknown ip ${ip}`);
+			this.ip_limit_map.set(ip, user_by_addr);
+			user = user_by_addr;
+		} else if (user_by_addr && user_by_ip) {
+			log.info(`Using limit for address ${address} for known ip ${ip}`);
+			this.ip_limit_map.set(ip, user_by_addr);
+			user = user_by_addr;
+		} else {
+			user = {};
 			this.address_limit_map.set(address,user);
+			this.ip_limit_map.set(ip,user);
 		}
 
 		if(!user[network])
@@ -219,7 +231,8 @@ class KaspaFaucet extends EventEmitter{
 		(async()=>{
 			for await(const event of socketConnections) {
 				const { networks, addresses, limits } = this;
-				const { socket, ip } = event;
+				const { socket } = event;
+				const ip = socket.ip;
 				socket.publish('networks', { networks });
 				socket.publish('addresses', { addresses });
 				networks.forEach(network=>{
