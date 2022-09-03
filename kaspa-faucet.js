@@ -210,6 +210,7 @@ class KaspaFaucet extends EventEmitter{
 		const spent = transactions.reduce((v, tx) => tx.amount+v, 0);
 		const available = this.limits[network] - spent;
 		const period = transactions.length ? transactions[0].ts - period_start : null;
+		log.info(`Address ${address} on ip ${ip} has ${available / 100000000} KAS available`);
 		return { available, period };
 	}
 
