@@ -1,6 +1,6 @@
 {
   "name": "@kaspa/faucet",
-  "version": "1.0.38",
+  "version": "1.0.39",
   "description": "kaspa-faucet",
   "scripts": {
     "start": "node kaspa-faucet"
@@ -14,7 +14,7 @@
     "@kaspa/grpc": ">=1.4.0",
     "@kaspa/grpc-node": ">=1.0.8",
     "@kaspa/wallet": ">=1.4.26",
-    "@kaspa/wallet-worker": ">=1.1.24",
+    "@kaspa/wallet-worker": ">=1.1.25",
     "@webcomponents/webcomponentsjs": "*",
     "colors": "*",
     "commander": "^6.2.1",
