@@ -131,7 +131,7 @@ class KaspaFaucetApp extends FlowApp {
 					<faucet-info limit="${limit}" available="${available}" address="${address}"></faucet-info>
 					<faucet-form network="${network}" .networks="${this.networks}" address="${address}" @network-change="${this.onNetworkChange}">
 						<div slot="captcha" class="${this.captchaKey? 'h-captcha': ''}" 
-							data-sitekey="${this.captchaKey}"></div>
+							data-sitekey="${this.captchaKey}" data-theme="dark"></div>
 					</faucet-form>
 				</div>
 				<div class="divider"></div>

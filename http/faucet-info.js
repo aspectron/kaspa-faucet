@@ -15,7 +15,7 @@ export class FaucetInfo extends BaseElement {
             .caption { font-size: 22px; }
             .info-content {font-size:16px;}
             .address-box{
-                background: #FFF;
+                background: #161927;
                 font-size: 0.82rem;
                 font-weight: bold;
                 /* border: 1px solid; */
