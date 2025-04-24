@@ -34,6 +34,7 @@ export class FaucetBalance extends BaseElement {
         super();
 		this.balances = {};
 		this.blueScores = {};
+		this.blocksSinceLastUpdate = 0;
 		//this.network = flow.app.network;
 	}
 
@@ -61,9 +62,10 @@ export class FaucetBalance extends BaseElement {
 		this.blueScoreUpdates = rpc.subscribe(`blue-score`);
 		(async()=>{
 			for await(const msg of this.blueScoreUpdates) {
-				const { network, blueScore } = msg.data;
-					this.blueScores[network] = blueScore;
-				if(this.network == network)
+				const {network, blueScore, blocksSinceLastUpdate} = msg.data;
+				this.blueScores[network] = blueScore;
+				this.blocksSinceLastUpdate = blocksSinceLastUpdate;
+				if (this.network == network)
 					this.requestUpdate();
 			}
 		})().then();
@@ -80,6 +82,7 @@ export class FaucetBalance extends BaseElement {
 		const available = this.balances[this.network]?.available ? KAS(this.balances[this.network].available)+' KAS' : '---';
 		const pending = this.balances[this.network]?.pending ? KAS(this.balances[this.network].pending)+' KAS' : null;
 		const blueScore = this.blueScores[this.network] ? FlowFormat.commas(this.blueScores[this.network]) : '---';
+		const blocksSinceLastUpdate = this.blocksSinceLastUpdate ? (this.blocksSinceLastUpdate < 10 ? "" : "") + this.blocksSinceLastUpdate.toFixed(1) : '--.-';
 
         return html`
             <div class='wrapper'>
@@ -89,6 +92,10 @@ export class FaucetBalance extends BaseElement {
 					<div class='blue-score' col>
 						<div class='tiny-caption'>DAG BLUE SCORE</div>
 						<div class='tiny-value'>${blueScore}</div>
+					</div>
+					<div class='blue-score' col>
+						<div class='tiny-caption'>BLOCKS/S</div>
+						<div class='tiny-value'>${blocksSinceLastUpdate}</div>
 					</div>
 					${ pending ? html`
 						<div class='pending' col>

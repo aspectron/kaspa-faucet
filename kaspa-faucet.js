@@ -229,6 +229,9 @@ class KaspaFaucet extends EventEmitter{
 	async initFaucet() {
 		const { flowHttp } = this;
 		let socketConnections = flowHttp.sockets.events.subscribe('connect');
+		let lastUpdateEpoch = 0;
+		let bpsArray = [];
+		let prevBlueScore;
 		(async()=>{
 			for await(const event of socketConnections) {
 				const { networks, addresses, limits } = this;
@@ -468,8 +471,25 @@ class KaspaFaucet extends EventEmitter{
 
 			wallet.on("blue-score-changed", (result)=>{
 				let {blueScore} = result;
-				//console.log(`[${network}] blue-score-changed: result, blueScore:`, result, blueScore)
-				flowHttp.sockets.publish(`blue-score`, { blueScore, network });
+				if (!prevBlueScore) {
+				    prevBlueScore = blueScore;
+				}
+				let avgPeriod = 30; // 30 second average
+				let now = Date.now();
+				let timeSinceLastUpdate = now - lastUpdateEpoch;
+				if (timeSinceLastUpdate > 500) {
+					lastUpdateEpoch = now;
+					let blocks = blueScore - prevBlueScore;
+					let bps = Math.round(10 * (blocks / (timeSinceLastUpdate / 1000))) / 10;
+					prevBlueScore = blueScore;
+					bpsArray.push(bps);
+					while (bpsArray.length > avgPeriod) {
+						bpsArray.shift();
+					}
+					let blocksSinceLastUpdate = Math.round(10 * (bpsArray.reduce((a, b) => a + b, 0) / bpsArray.length)) / 10;
+					console.debug(`[${network}] blueScore: ${blueScore}, bps: ${(bps < 10 ? " " : "") + bps.toFixed(1)}, bps-30s: ${blocksSinceLastUpdate.toFixed(1)}, raw: [${bpsArray.join(', ')}]`);
+					flowHttp.sockets.publish(`blue-score`, {blueScore, network, blocksSinceLastUpdate});
+				}
 			})
 
 			wallet.on("balance-update", (detail)=>{
