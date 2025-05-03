@@ -179,14 +179,26 @@ class KaspaFaucet extends EventEmitter{
 		if(this.limits[network] == Number.MAX_SAFE_INTEGER)
 			return Number.MAX_SAFE_INTEGER;
 
-		let user_by_addr = this.address_limit_map.get(address);
-		let user_by_ip = this.ip_limit_map.get(ip);
+		let user_by_addr = address && address !== 'default' ? this.address_limit_map.get(address) : undefined;
+		let user_by_ip = ip ? this.ip_limit_map.get(ip) : undefined;
 
-		let user = user_by_addr || user_by_ip;
-		if(!user) {
-			user = { };
-			this.ip_limit_map.set(ip,user);
+		let user;
+		if (!user_by_addr && user_by_ip) {
+			log.info(`Using limit for ip ${ip} for unknown address ${address}`);
+			this.address_limit_map.set(address,user_by_ip);
+			user = user_by_ip;
+		} else if (!user_by_ip && user_by_addr) {
+			log.info(`Using limit for address ${address} for unknown ip ${ip}`);
+			this.ip_limit_map.set(ip, user_by_addr);
+			user = user_by_addr;
+		} else if (user_by_addr && user_by_ip) {
+			log.info(`Using limit for address ${address} for known ip ${ip}`);
+			this.ip_limit_map.set(ip, user_by_addr);
+			user = user_by_addr;
+		} else {
+			user = {};
 			this.address_limit_map.set(address,user);
+			this.ip_limit_map.set(ip,user);
 		}
 
 		if(!user[network])
@@ -198,6 +210,7 @@ class KaspaFaucet extends EventEmitter{
 		const spent = transactions.reduce((v, tx) => tx.amount+v, 0);
 		const available = this.limits[network] - spent;
 		const period = transactions.length ? transactions[0].ts - period_start : null;
+		log.info(`Address ${address} on ip ${ip} has ${available / 100000000} KAS available`);
 		return { available, period };
 	}
 
@@ -216,10 +229,14 @@ class KaspaFaucet extends EventEmitter{
 	async initFaucet() {
 		const { flowHttp } = this;
 		let socketConnections = flowHttp.sockets.events.subscribe('connect');
+		let lastUpdateEpoch = 0;
+		let bpsArray = [];
+		let prevBlueScore;
 		(async()=>{
 			for await(const event of socketConnections) {
 				const { networks, addresses, limits } = this;
-				const { socket, ip } = event;
+				const { socket } = event;
+				const ip = socket.ip;
 				socket.publish('networks', { networks });
 				socket.publish('addresses', { addresses });
 				networks.forEach(network=>{
@@ -454,8 +471,25 @@ class KaspaFaucet extends EventEmitter{
 
 			wallet.on("blue-score-changed", (result)=>{
 				let {blueScore} = result;
-				//console.log(`[${network}] blue-score-changed: result, blueScore:`, result, blueScore)
-				flowHttp.sockets.publish(`blue-score`, { blueScore, network });
+				if (!prevBlueScore) {
+				    prevBlueScore = blueScore;
+				}
+				let avgPeriod = 30; // 30 second average
+				let now = Date.now();
+				let timeSinceLastUpdate = now - lastUpdateEpoch;
+				if (timeSinceLastUpdate > 500) {
+					lastUpdateEpoch = now;
+					let blocks = blueScore - prevBlueScore;
+					let bps = Math.round(10 * (blocks / (timeSinceLastUpdate / 1000))) / 10;
+					prevBlueScore = blueScore;
+					bpsArray.push(bps);
+					while (bpsArray.length > avgPeriod) {
+						bpsArray.shift();
+					}
+					let blocksSinceLastUpdate = Math.round(10 * (bpsArray.reduce((a, b) => a + b, 0) / bpsArray.length)) / 10;
+					console.debug(`[${network}] blueScore: ${blueScore}, bps: ${(bps < 10 ? " " : "") + bps.toFixed(1)}, bps-30s: ${blocksSinceLastUpdate.toFixed(1)}, raw: [${bpsArray.join(', ')}]`);
+					flowHttp.sockets.publish(`blue-score`, {blueScore, network, blocksSinceLastUpdate});
+				}
 			})
 
 			wallet.on("balance-update", (detail)=>{

@@ -65,7 +65,7 @@ export class FaucetForm extends BaseElement {
 		let address = qS(".address").value;
 		let network = qS(".network").value;
 		let amount = qS(".amount").value;
-		let captcha = this.querySelector('.g-recaptcha .g-recaptcha-response')?.value;
+		let captcha = this.querySelector('[name=h-captcha-response]')?.value;
 		//let network = flow.app.network;
 		//kaspatest:qq0nvlmn07f6edcdfynt4nu4l4r58rkquuvgt635ac
 		console.log({ address, network, amount, captcha });
@@ -173,5 +173,5 @@ export class FaucetForm extends BaseElement {
 }
 
 FaucetForm.define("faucet-form",{
-	"window.grecaptcha":"https://www.google.com/recaptcha/api.js?onload=OnReCaptchaLoad&render=explicit"
+	"window.grecaptcha":"https://js.hcaptcha.com/1/api.js?onload=OnReCaptchaLoad&render=explicit"
 });
